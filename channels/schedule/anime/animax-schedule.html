@@ -26,21 +26,17 @@
   <pre id="output">Loading...</pre>
 
   <script>
-    // URL for Animax XML
     const url = "https://raw.githubusercontent.com/matthuisman/i.mjh.nz/master/SamsungTVPlus/in.xml";
 
-    // Function to convert UTC to local time in human-readable format
-    function convertUTCtoLocal(utcTime) {
+    function formatEPGTime(epgTime) {
       const date = new Date(
-        utcTime.slice(0, 4),         // Year
-        utcTime.slice(4, 6) - 1,     // Month (JavaScript months are 0-based)
-        utcTime.slice(6, 8),         // Day
-        utcTime.slice(8, 10),        // Hours
-        utcTime.slice(10, 12),       // Minutes
-        utcTime.slice(12, 14)        // Seconds
+        epgTime.slice(0, 4),         // Year
+        epgTime.slice(4, 6) - 1,     // Month
+        epgTime.slice(6, 8),         // Day
+        epgTime.slice(8, 10),        // Hours
+        epgTime.slice(10, 12),       // Minutes
+        epgTime.slice(12, 14)        // Seconds
       );
-
-      // Convert to local time of the user's browser
       return date.toLocaleString("en-US", {
         weekday: "short",
         year: "numeric",
@@ -52,7 +48,6 @@
       });
     }
 
-    // Function to fetch and parse the EPG data
     async function fetchAndParseEPG() {
       try {
         const res = await fetch(url);
@@ -62,7 +57,6 @@
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
-        // Find the Animax channel ID
         const channels = xmlDoc.querySelectorAll("channel");
         const animaxIds = [];
         channels.forEach(ch => {
@@ -80,23 +74,17 @@
         const programmes = xmlDoc.querySelectorAll("programme");
         let output = "";
 
-        // Loop through programmes and display the Animax schedule
         programmes.forEach(p => {
           if (animaxIds.includes(p.getAttribute("channel"))) {
             const title = p.querySelector("title")?.textContent || "No Title";
             const desc = p.querySelector("desc")?.textContent || "No Description";
-            const startRaw = p.getAttribute("start").split(" ")[0]; // Extract raw start time
-            const stopRaw = p.getAttribute("stop").split(" ")[0]; // Extract raw stop time
+            const startRaw = p.getAttribute("start").split(" ")[0];
+            const stopRaw = p.getAttribute("stop").split(" ")[0];
 
-            const start = convertUTCtoLocal(startRaw); // Convert start time to local time
-            const stop = convertUTCtoLocal(stopRaw);   // Convert stop time to local time
+            const start = formatEPGTime(startRaw);
+            const stop = formatEPGTime(stopRaw);
 
-            const startDate = new Date(startRaw.slice(0, 4), startRaw.slice(4, 6) - 1, startRaw.slice(6, 8), startRaw.slice(8, 10), startRaw.slice(10, 12), startRaw.slice(12, 14));
-
-            // Show only future events (filter by comparing with the current time)
-            if (startDate >= new Date()) {
-              output += `${title}\nStart: ${start}\nEnd: ${stop}\nDescription: ${desc}\n\n`;
-            }
+            output += `${title}\nStart: ${start}\nEnd: ${stop}\nDescription: ${desc}\n\n`;
           }
         });
 
@@ -106,7 +94,7 @@
       }
     }
 
-    fetchAndParseEPG(); // Call the function to fetch and parse the data
+    fetchAndParseEPG();
   </script>
 </body>
 </html>
