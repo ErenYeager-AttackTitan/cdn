@@ -1,0 +1,44 @@
+.video-js {
+  background-color: #000;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vjs-control-bar {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  font-size: 14px;
+}
+
+.vjs-play-control,
+.vjs-volume-panel,
+.vjs-fullscreen-control,
+.vjs-subtitles-button {
+  color: #fff;
+  transition: color 0.2s;
+}
+
+.vjs-play-control:hover,
+.vjs-volume-panel:hover,
+.vjs-fullscreen-control:hover,
+.vjs-subtitles-button:hover {
+  color: #0af;
+}
+
+.vjs-big-play-button {
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  font-size: 2em;
+  color: white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  top: 45%;
+  left: 45%;
+}
+
+.vjs-menu-button-popup .vjs-menu {
+  background-color: rgba(0, 0, 0, 0.8);
+}
