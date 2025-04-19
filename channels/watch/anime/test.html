@@ -6,80 +6,12 @@
   <source src="https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8" type="application/x-mpegURL">
 </video>
 
-<!-- Dropdown for Quality Selection -->
-<div id="quality-selector">
-  <select id="quality-dropdown">
-    <!-- Options will be populated here dynamically -->
-  </select>
-</div>
-
-<!-- Dropdown for Subtitle Selection -->
-<div id="subtitle-selector">
-  <select id="subtitle-dropdown">
-    <!-- Options will be populated here dynamically -->
-  </select>
-</div>
-
 <script>
   var player = videojs('myPlayer');
 
-  player.ready(function() {
-    var hls = player.tech().hls;
-
-    // Quality Selector: Wait for metadata to load and available qualities to be fetched
-    hls.on('loadedmetadata', function () {
-      var qualityDropdown = document.getElementById('quality-dropdown');
-      
-      // Get available quality levels from HLS
-      var levels = hls.levels;
-
-      // Populate the dropdown with available quality options
-      levels.forEach(function(level, index) {
-        var option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${level.height}p (${Math.round(level.bitrate / 1000)} kbps)`;
-        qualityDropdown.appendChild(option);
-      });
-
-      // Event listener to change quality on selection
-      qualityDropdown.addEventListener('change', function() {
-        var selectedLevel = qualityDropdown.value;
-        hls.startLevel = parseInt(selectedLevel); // Set the selected quality level
-      });
-    });
-
-    // Subtitle Selector: Handling subtitles (if available in the stream)
-    hls.on('manifestLoaded', function(event, data) {
-      var subtitleDropdown = document.getElementById('subtitle-dropdown');
-      
-      if (data.subtitles && data.subtitles.length > 0) {
-        var subtitleTracks = data.subtitles;
-
-        // Populate subtitle dropdown
-        subtitleTracks.forEach(function(track, index) {
-          var option = document.createElement('option');
-          option.value = index;
-          option.textContent = track.name || `Subtitle ${index + 1}`;
-          subtitleDropdown.appendChild(option);
-        });
-
-        // Event listener to change subtitles on selection
-        subtitleDropdown.addEventListener('change', function() {
-          var selectedTrackIndex = subtitleDropdown.value;
-          // Remove existing subtitle tracks
-          player.textTracks().forEach(track => track.mode = 'disabled');
-          // Enable selected subtitle track
-          var selectedTrack = subtitleTracks[selectedTrackIndex];
-          player.addRemoteTextTrack({
-            kind: 'subtitles',
-            label: selectedTrack.name,
-            language: selectedTrack.language,
-            src: selectedTrack.uri,
-            default: true
-          });
-        });
-      }
-    });
+  // Initialize HLS support in Video.js automatically.
+  player.ready(function () {
+    // Video.js automatically handles the quality selection UI as part of the native controls.
+    player.hlsQualitySelector();
   });
-            </script>
-            
+</script>
