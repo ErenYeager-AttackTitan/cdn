@@ -9,9 +9,14 @@
 <script>
   var player = videojs('myPlayer');
 
-  // Initialize HLS support in Video.js automatically.
-  player.ready(function () {
-    // Video.js automatically handles the quality selection UI as part of the native controls.
-    player.hlsQualitySelector();
+  player.ready(function() {
+    // Enable quality selector in the video player for HLS streams
+    player.tech_.hlsQualitySelector();
+
+    // Listen for the ready event and dynamically update the source URL if it changes
+    player.on('loadedmetadata', function() {
+      var currentSource = player.currentSrc();
+      console.log("Current HLS Stream URL: " + currentSource);
+    });
   });
 </script>
