@@ -13,19 +13,26 @@
   </select>
 </div>
 
+<!-- Dropdown for Subtitle Selection -->
+<div id="subtitle-selector">
+  <select id="subtitle-dropdown">
+    <!-- Options will be populated here dynamically -->
+  </select>
+</div>
+
 <script>
   var player = videojs('myPlayer');
 
   player.ready(function() {
     var hls = player.tech().hls;
 
-    // Wait for metadata to load and available qualities to be fetched
+    // Quality Selector: Wait for metadata to load and available qualities to be fetched
     hls.on('loadedmetadata', function () {
       var qualityDropdown = document.getElementById('quality-dropdown');
       
       // Get available quality levels from HLS
       var levels = hls.levels;
-      
+
       // Populate the dropdown with available quality options
       levels.forEach(function(level, index) {
         var option = document.createElement('option');
@@ -41,18 +48,34 @@
       });
     });
 
-    // Handling subtitles (if available in the stream)
+    // Subtitle Selector: Handling subtitles (if available in the stream)
     hls.on('manifestLoaded', function(event, data) {
+      var subtitleDropdown = document.getElementById('subtitle-dropdown');
+      
       if (data.subtitles && data.subtitles.length > 0) {
         var subtitleTracks = data.subtitles;
-        
-        subtitleTracks.forEach(function(track) {
+
+        // Populate subtitle dropdown
+        subtitleTracks.forEach(function(track, index) {
+          var option = document.createElement('option');
+          option.value = index;
+          option.textContent = track.name || `Subtitle ${index + 1}`;
+          subtitleDropdown.appendChild(option);
+        });
+
+        // Event listener to change subtitles on selection
+        subtitleDropdown.addEventListener('change', function() {
+          var selectedTrackIndex = subtitleDropdown.value;
+          // Remove existing subtitle tracks
+          player.textTracks().forEach(track => track.mode = 'disabled');
+          // Enable selected subtitle track
+          var selectedTrack = subtitleTracks[selectedTrackIndex];
           player.addRemoteTextTrack({
             kind: 'subtitles',
-            label: track.name,
-            language: track.language,
-            src: track.uri,
-            default: track.default
+            label: selectedTrack.name,
+            language: selectedTrack.language,
+            src: selectedTrack.uri,
+            default: true
           });
         });
       }
