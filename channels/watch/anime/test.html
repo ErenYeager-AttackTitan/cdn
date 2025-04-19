@@ -40,5 +40,23 @@
         hls.startLevel = parseInt(selectedLevel); // Set the selected quality level
       });
     });
+
+    // Handling subtitles (if available in the stream)
+    hls.on('manifestLoaded', function(event, data) {
+      if (data.subtitles && data.subtitles.length > 0) {
+        var subtitleTracks = data.subtitles;
+        
+        subtitleTracks.forEach(function(track) {
+          player.addRemoteTextTrack({
+            kind: 'subtitles',
+            label: track.name,
+            language: track.language,
+            src: track.uri,
+            default: track.default
+          });
+        });
+      }
+    });
   });
-</script>
+            </script>
+            
