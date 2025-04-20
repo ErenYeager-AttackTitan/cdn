@@ -1,0 +1,19 @@
+#EXTM3U tvg-url="https://raw.githubusercontent.com/matthuisman/i.mjh.nz/master/SamsungTVPlus/all.xml"
+
+#EXTINF:-1 tvg-id="tv-tokyo" tvg-name="2 - TV Tokyo" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/TV_Tokyo_%28Japanese%29_2023.svg/500px-TV_Tokyo_%28Japanese%29_2023.svg.png" tvg-language="ja" tvg-country="JP" tvg-genre="Anime" group-title="Anime" channel-number="2", TV Tokyo
+http://vthanh.utako.moe/TV_Tokyo/index.m3u8
+
+#EXTINF:-1 tvg-id="tv-asahi" tvg-name="3 - TV Asahi" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/TV_Asahi_HD_logo.svg/500px-TV_Asahi_HD_logo.svg.png" tvg-language="ja" tvg-country="JP" tvg-genre="General" group-title="General" channel-number="3", TV Asahi
+http://vthanh.utako.moe/TV_Asahi/index.m3u8
+
+#EXTINF:-1 tvg-id="animax" tvg-name="1 - Animax" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Animax_logo.svg/500px-Animax_logo.svg.png" tvg-language="ja" tvg-country="JP" tvg-genre="Anime" group-title="Anime" channel-number="1", Animax
+https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8
+
+#EXTINF:-1 tvg-id="jsports-1" tvg-name="4 - JSports 1" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/J_Sports_Logo.svg/500px-J_Sports_Logo.svg.png" tvg-language="ja" tvg-country="JP" tvg-genre="Sports" group-title="Sports" channel-number="4", JSports 1
+http://luong.utako.moe/js1/index.m3u8
+
+#EXTINF:-1 tvg-id="nhk-world" tvg-name="5 - NHK World" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/NHK_World.svg/500px-NHK_World.svg.png" tvg-language="ja" tvg-country="JP" tvg-genre="News" group-title="News" channel-number="5", NHK World
+https://master.nhkworld.jp/nhkworld-tv/playlist/live.m3u8
+
+#EXTINF:-1 tvg-id="mtv-japan" tvg-name="6 - MTV Japan" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/MTV-2021.svg/500px-MTV-2021.svg.png" tvg-language="ja" tvg-country="JP" tvg-genre="Music" group-title="Music" channel-number="6", MTV Japan
+http://cdns.jp-primehome.com:8000/zhongying/live/playlist.m3u8?cid=cs18&isp=4
