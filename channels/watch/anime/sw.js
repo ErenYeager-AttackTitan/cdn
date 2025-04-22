@@ -1,6 +1,6 @@
-const CACHE_NAME = "animax-cache-v1";
+const CACHE_NAME = "Animax-Cache";
 const urlsToCache = [
-  "animax.html",
+  "Animax",
   "manifest.json",
   "https://mikasa-ackerman-cdn.pages.dev/index.jpg"
 ];
