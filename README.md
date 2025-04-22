@@ -2,6 +2,8 @@
 
 `“This World Is Cruel”`
 
+`Animax PWA added`
+
 Welcome to **Mikasa Ackerman CDN** – my personal content delivery network for hosting and serving anime-themed and NSFW-friendly assets.
 
 Hosted at:  
