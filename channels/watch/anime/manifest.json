@@ -1,7 +1,7 @@
 {
   "name": "Animax",
   "short_name": "Animax",
-  "start_url": "./animax.html",
+  "start_url": "./animax",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
