@@ -4,10 +4,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Watch Anime Episode</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- JWPlayer Script -->
   <script src="https://cdn.jwplayer.com/libraries/aVr2lJgW.js"></script>
+
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Default (Light Mode) Styles */
+    body {
+      background-color: #ffffff;
+      color: #333;
+    }
+
+    .container {
+      background-color: #ffffff;
+    }
+
+    /* Dark Mode Styles */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #121212;
+        color: #f5f5f5;
+      }
+
+      .container {
+        background-color: #181818;
+      }
+
+      .bg-gray-800 {
+        background-color: #333;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
+<body class="font-sans">
 
   <!-- Navbar -->
   <nav class="bg-gray-800">
@@ -15,28 +47,8 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
           <span class="text-xl font-bold text-white">AnimeStream</span>
-          <div class="hidden md:block ml-10">
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-              <a href="#" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anime List</a>
-              <a href="#" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Genres</a>
-            </div>
-          </div>
-        </div>
-        <div class="-mr-2 flex md:hidden">
-          <button id="mobile-menu-button" class="text-gray-300 hover:text-white p-2 rounded-md focus:outline-none">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-          </button>
         </div>
       </div>
-    </div>
-    <div id="mobile-menu" class="md:hidden hidden px-2 pt-2 pb-3 space-y-1">
-      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Home</a>
-      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Anime List</a>
-      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Genres</a>
     </div>
   </nav>
 
@@ -53,25 +65,15 @@
     </section>
 
     <section class="mt-4">
-      <label for="episode-select" class="block text-sm font-medium">Select Episode:</label>
-      <select id="episode-select" class="mt-1 block w-full bg-gray-800 text-white border border-gray-600 rounded px-3 py-2">
-        <!-- Populated by JS -->
-      </select>
+      <h3 class="text-lg font-semibold mb-2">Anime Poster</h3>
+      <img id="anime-poster" class="w-full h-auto rounded-lg" src="" alt="Anime Poster" />
     </section>
 
-    <section class="mt-6 bg-gray-800 p-4 rounded-lg shadow">
+    <section class="mt-6">
       <h3 class="text-lg font-semibold mb-2">Anime Information</h3>
       <p><strong>Description:</strong> <span id="anime-description">Loading...</span></p>
       <p><strong>Genres:</strong> <span id="anime-genres">Loading...</span></p>
       <p><strong>Status:</strong> <span id="anime-status">Loading...</span></p>
-    </section>
-
-    <section class="mt-6">
-      <h3 class="text-lg font-semibold mb-2">Comments</h3>
-      <div class="space-y-2">
-        <div class="bg-gray-800 p-3 rounded">User123: This episode was amazing!</div>
-        <div class="bg-gray-800 p-3 rounded">OtakuFan: Can't wait for the next one.</div>
-      </div>
     </section>
   </main>
 
@@ -130,5 +132,4 @@
   </script>
 
 </body>
-                                                                                     </html>
-  
+</html>
