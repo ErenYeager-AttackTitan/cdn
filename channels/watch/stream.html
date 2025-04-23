@@ -30,6 +30,23 @@
       width: 100%;
       height: 400px;
     }
+
+    .card {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .card .card-body {
+      padding-top: 20px;
+    }
   </style>
 </head>
 <body class="font-sans">
@@ -47,26 +64,29 @@
 
   <!-- Main content -->
   <main class="container mx-auto p-4 space-y-6">
-    <section>
+    <section class="card">
       <h2 class="text-xl font-semibold mb-2">Anime Title: <span id="anime-title">Loading...</span></h2>
+      <div class="flex space-x-4">
+        <img id="anime-poster" class="w-32 h-auto rounded-lg" src="" alt="Anime Poster" />
+        <div class="card-body">
+          <p><strong>Description:</strong> <span id="anime-description">Loading...</span></p>
+          <p><strong>Genres:</strong> <span id="anime-genres">Loading...</span></p>
+          <p><strong>Status:</strong> <span id="anime-status">Loading...</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="text-lg font-semibold mb-2">Select Episode</h3>
+      <select id="episode-select" class="w-full p-2 bg-white border border-gray-300 rounded-lg">
+        <!-- Options will be dynamically loaded -->
+      </select>
     </section>
 
     <section>
       <div id="player" class="w-full aspect-video bg-black flex items-center justify-center text-gray-500 text-lg">
         Loading Player...
       </div>
-    </section>
-
-    <section class="mt-4">
-      <h3 class="text-lg font-semibold mb-2">Anime Poster</h3>
-      <img id="anime-poster" class="w-full h-auto rounded-lg" src="" alt="Anime Poster" />
-    </section>
-
-    <section class="mt-6">
-      <h3 class="text-lg font-semibold mb-2">Anime Information</h3>
-      <p><strong>Description:</strong> <span id="anime-description">Loading...</span></p>
-      <p><strong>Genres:</strong> <span id="anime-genres">Loading...</span></p>
-      <p><strong>Status:</strong> <span id="anime-status">Loading...</span></p>
     </section>
   </main>
 
@@ -75,50 +95,62 @@
   </footer>
 
   <script>
-    // Fetch anime data from the provided JSON
+    // Fetch anime data from external URL
     async function fetchAnimeData() {
-      const animeData = {
-        "animax": {
-          "title": "Animax",
-          "description": "An exciting adventure in the world of anime.",
-          "genres": ["Action", "Adventure", "Sci-Fi"],
-          "status": "Ongoing",
-          "poster": "https://example.com/animax/poster.jpg",
-          "episodes": [
-            {
-              "episode": 1,
-              "m3u8": "https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8"
-            }
-          ]
-        }
-      };
+      const animeUrl = 'https://mikasa-ackerman-cdn.pages.dev/channels/watch/anime_data.json';
 
-      const anime = animeData["animax"];
-      if (anime) {
-        // Set the anime title, description, genres, and status
-        document.getElementById("anime-title").textContent = anime.title;
-        document.getElementById("anime-description").textContent = anime.description;
-        document.getElementById("anime-genres").textContent = anime.genres.join(", ");
-        document.getElementById("anime-status").textContent = anime.status;
+      try {
+        // Fetch the external JSON file
+        const response = await fetch(animeUrl);
+        const animeData = await response.json();
 
-        // Set the poster image
-        document.getElementById("anime-poster").src = anime.poster;
+        const anime = animeData["animax"];
+        if (anime) {
+          // Set the anime title, description, genres, and status
+          document.getElementById("anime-title").textContent = anime.title;
+          document.getElementById("anime-description").textContent = anime.description;
+          document.getElementById("anime-genres").textContent = anime.genres.join(", ");
+          document.getElementById("anime-status").textContent = anime.status;
 
-        // Initialize JWPlayer with the M3U8 URL for episode 1
-        const episode = anime.episodes[0]; // Only one episode
-        if (episode) {
-          jwplayer("player").setup({
-            file: episode.m3u8,
-            image: anime.poster,
-            width: "100%",
-            height: "100%",
-            aspectratio: "16:9",
-            autostart: true,
-            controls: true
+          // Set the poster image
+          document.getElementById("anime-poster").src = anime.poster;
+
+          // Populate episode selection dropdown
+          const episodeSelect = document.getElementById("episode-select");
+          anime.episodes.forEach((episode, index) => {
+            const option = document.createElement("option");
+            option.value = episode.m3u8;
+            option.textContent = `Episode ${episode.episode}`;
+            episodeSelect.appendChild(option);
           });
+
+          // Set up JWPlayer for the first episode by default
+          if (anime.episodes.length > 0) {
+            const firstEpisode = anime.episodes[0];
+            jwplayer("player").setup({
+              file: firstEpisode.m3u8,
+              image: anime.poster,
+              width: "100%",
+              height: "100%",
+              aspectratio: "16:9",
+              autostart: true,
+              controls: true
+            });
+          }
+
+          // Change video when episode is selected
+          episodeSelect.addEventListener('change', (event) => {
+            const selectedM3U8 = event.target.value;
+            jwplayer("player").load({
+              file: selectedM3U8
+            });
+          });
+        } else {
+          document.getElementById("anime-title").textContent = "Anime not found.";
         }
-      } else {
-        document.getElementById("anime-title").textContent = "Anime not found.";
+      } catch (error) {
+        console.error("Error fetching anime data:", error);
+        document.getElementById("anime-title").textContent = "Failed to load anime data.";
       }
     }
 
