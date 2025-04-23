@@ -113,6 +113,7 @@
         if (anime) {
           // Set the anime title, description, genres, and status
           document.getElementById("anime-title").textContent = anime.title;
+          document.getElementById("title").textContent = anime.watcht;
           document.getElementById("anime-description").textContent = anime.description;
           document.getElementById("anime-genres").textContent = anime.genres.join(", ");
           document.getElementById("anime-status").textContent = anime.status;
