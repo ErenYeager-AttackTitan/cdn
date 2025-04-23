@@ -88,7 +88,6 @@
     // Fetch anime data from external JSON
     async function fetchAnimeData() {
       const animeId = getParam("id");
-      const episode = getParam("ep");
 
       try {
         // Fetch the external JSON file
@@ -102,23 +101,21 @@
           document.getElementById("anime-genres").textContent = anime.genres.join(", ");
           document.getElementById("anime-status").textContent = anime.status;
 
-          const select = document.getElementById("episode-select");
-          anime.episodes.forEach(episodeData => {
-            const option = document.createElement("option");
-            option.value = episodeData.episode;
-            option.textContent = `Episode ${episodeData.episode}`;
-            if (episodeData.episode == episode) option.selected = true;
-            select.appendChild(option);
-          });
+          // Set the poster image
+          document.getElementById("anime-poster").src = anime.poster;
 
-          // Set the M3U8 URL for the selected episode
-          const selectedEpisode = anime.episodes.find(ep => ep.episode == episode);
-          if (selectedEpisode) {
-            const player = document.getElementById("player");
-            player.innerHTML = `<video controls class="w-full h-full">
-              <source src="${selectedEpisode.m3u8}" type="application/x-mpegURL">
-              Your browser does not support the video tag.
-            </video>`;
+          // Initialize JWPlayer with the M3U8 URL for episode 1
+          const episode = anime.episodes[0]; // Only one episode
+          if (episode) {
+            jwplayer("player").setup({
+              file: episode.m3u8,
+              image: anime.poster,
+              width: "100%",
+              height: "100%",
+              aspectratio: "16:9",
+              autostart: true,
+              controls: true
+            });
           }
         } else {
           document.getElementById("anime-title").textContent = "Anime not found.";
@@ -130,10 +127,6 @@
     }
 
     fetchAnimeData();
-
-    document.getElementById("mobile-menu-button").addEventListener("click", () => {
-      document.getElementById("mobile-menu").classList.toggle("hidden");
-    });
   </script>
 
 </body>
