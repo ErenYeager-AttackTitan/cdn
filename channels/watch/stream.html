@@ -64,6 +64,15 @@
 
   <!-- Main content -->
   <main class="container mx-auto p-4 space-y-6">
+    
+    <!-- Video Player Section -->
+    <section>
+      <div id="player" class="w-full aspect-video bg-black flex items-center justify-center text-gray-500 text-lg">
+        Loading Player...
+      </div>
+    </section>
+
+    <!-- Anime Card Section -->
     <section class="card">
       <h2 class="text-xl font-semibold mb-2">Anime Title: <span id="anime-title">Loading...</span></h2>
       <div class="flex space-x-4">
@@ -76,18 +85,14 @@
       </div>
     </section>
 
+    <!-- Episode Selection Section -->
     <section>
       <h3 class="text-lg font-semibold mb-2">Select Episode</h3>
       <select id="episode-select" class="w-full p-2 bg-white border border-gray-300 rounded-lg">
         <!-- Options will be dynamically loaded -->
       </select>
     </section>
-
-    <section>
-      <div id="player" class="w-full aspect-video bg-black flex items-center justify-center text-gray-500 text-lg">
-        Loading Player...
-      </div>
-    </section>
+    
   </main>
 
   <footer class="bg-gray-800 p-4 mt-6 text-center text-sm text-gray-400">
