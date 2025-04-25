@@ -79,8 +79,9 @@
 
         programmes.forEach(p => {
           if (animaxIds.includes(p.getAttribute("channel"))) {
-            const title = p.querySelector("title")?.textContent || "No Title";
             const desc = p.querySelector("desc")?.textContent || "No Description";
+            const title = p.querySelector("title")?.textContent || "No Title";
+            
             const startRaw = p.getAttribute("start").split(" ")[0];
             const stopRaw = p.getAttribute("stop").split(" ")[0];
 
