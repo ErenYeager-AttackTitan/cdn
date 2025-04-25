@@ -29,24 +29,27 @@
     const url = "https://raw.githubusercontent.com/matthuisman/i.mjh.nz/master/SamsungTVPlus/all.xml";
 
     function formatEPGTime(epgTime) {
-      const date = new Date(
-        epgTime.slice(0, 4),         // Year
-        epgTime.slice(4, 6) - 1,     // Month
-        epgTime.slice(6, 8),         // Day
-        epgTime.slice(8, 10),        // Hours
-        epgTime.slice(10, 12),       // Minutes
-        epgTime.slice(12, 14)        // Seconds
-      );
-      return date.toLocaleString("en-US", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      });
-    }
+  const date = new Date(
+    epgTime.slice(0, 4),         // Year
+    epgTime.slice(4, 6) - 1,     // Month
+    epgTime.slice(6, 8),         // Day
+    epgTime.slice(8, 10),        // Hours
+    epgTime.slice(10, 12),       // Minutes,
+    epgTime.slice(12, 14)        // Seconds
+  );
+
+  return date.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
 
     async function fetchAndParseEPG() {
       try {
