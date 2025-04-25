@@ -87,23 +87,26 @@
           if (animaxIds.includes(p.getAttribute("channel"))) {
             
             const desc = p.querySelector("desc")?.textContent || "No Description";
-            const title = p.querySelector("title")?.textContent || "No Title";
-            const startRaw = p.getAttribute("start").split(" ")[0]; // Extract raw start time
-            const stopRaw = p.getAttribute("stop").split(" ")[0]; // Extract raw stop time
+const title = p.querySelector("title")?.textContent || "No Title";
+const startRaw = p.getAttribute("start").split(" ")[0];
+const stopRaw = p.getAttribute("stop").split(" ")[0];
 
-            const start = convertUTCtoLocal(startRaw); // Convert start time to local time
-            const stop = convertUTCtoLocal(stopRaw);   // Convert stop time to local time
-const startDate = new Date(startRaw.slice(0, 4), startRaw.slice(4, 6) - 1, startRaw.slice(6, 8), startRaw.slice(8, 10), startRaw.slice(10, 12), startRaw.slice(12, 14));
-    
-            
-            // Show only future events (filter by comparing with the current time)
-            for (let show of shows) {
-  
-  if (startDate >= new Date()) {
-    
-    output += `${show.title}\nStart: ${show.start}\nEnd: ${show.stop}\nDescription: ${show.desc}\n\n`;
-  }
+const start = convertUTCtoLocal(startRaw);
+const stop = convertUTCtoLocal(stopRaw);
+
+const startDate = new Date(
+  startRaw.slice(0, 4),
+  startRaw.slice(4, 6) - 1,
+  startRaw.slice(6, 8),
+  startRaw.slice(8, 10),
+  startRaw.slice(10, 12),
+  startRaw.slice(12, 14)
+);
+
+if (startDate >= new Date()) {
+  output += `${title}\nStart: ${start}\nEnd: ${stop}\nDescription: ${desc}\n\n`;
 }
+            
 
           }
         });
