@@ -93,13 +93,13 @@
 
             const start = convertUTCtoLocal(startRaw); // Convert start time to local time
             const stop = convertUTCtoLocal(stopRaw);   // Convert stop time to local time
-
+const startDate = new Date(startRaw.slice(0, 4), startRaw.slice(4, 6) - 1, startRaw.slice(6, 8), startRaw.slice(8, 10), startRaw.slice(10, 12), startRaw.slice(12, 14));
+    
             
             // Show only future events (filter by comparing with the current time)
             for (let show of shows) {
   
   if (startDate >= new Date()) {
-    const startDate = new Date(startRaw.slice(0, 4), startRaw.slice(4, 6) - 1, startRaw.slice(6, 8), startRaw.slice(8, 10), startRaw.slice(10, 12), startRaw.slice(12, 14));
     
     output += `${show.title}\nStart: ${show.start}\nEnd: ${show.stop}\nDescription: ${show.desc}\n\n`;
   }
