@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video</title>
+</head>
+<body>
+
+<h1>Upload Video</h1>
+
+<!-- Form for video upload -->
+<form id="uploadForm" method="POST" enctype="multipart/form-data">
+    <label for="videoFile">Choose video to upload:</label>
+    <input type="file" id="videoFile" name="file" required><br><br>
+    
+    <button type="submit">Upload Video</button>
+</form>
+
+<script>
+    // Function to fetch the upload URL from VidGuard API
+    async function getUploadUrl() {
+        try {
+            const response = await fetch('https://api.vidguard.to/v1/upload/server?key=9bgr80DjkwmMq75LjXmEXPBYV2JWLvZa3z');
+            const data = await response.json();
+            return data.result.url;
+        } catch (error) {
+            console.error('Error fetching upload URL:', error);
+        }
+    }
+
+    // When the form is submitted, handle the video upload
+    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+        event.preventDefault();  // Prevent the default form submission
+
+        const uploadUrl = await getUploadUrl();  // Get the server URL for upload
+
+        if (!uploadUrl) {
+            alert('Error fetching upload URL');
+            return;
+        }
+
+        // Prepare the form data with the video file and required fields
+        const formData = new FormData();
+        formData.append('file', document.getElementById('videoFile').files[0]);
+        formData.append('key', '9bgr80DjkwmMq75LjXmEXPBYV2JWLvZa3z');  // API Key
+        formData.append('folder', '86555');  // Folder ID (updated)
+
+        // Use fetch to send the data to the obtained upload URL
+        try {
+            const response = await fetch(uploadUrl, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Video uploaded successfully!');
+            } else {
+                alert('Error uploading video.');
+            }
+        } catch (error) {
+            console.error('Error uploading video:', error);
+            alert('Error uploading video.');
+        }
+    });
+</script>
+
+</body>
+</html>
