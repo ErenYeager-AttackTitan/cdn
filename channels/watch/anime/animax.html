@@ -62,10 +62,7 @@
       abouttext: "Animax",
       aboutlink: "https://mikasa-ackerman-cdn.pages.dev/channels/watch/anime/animax",
       autostart: "viewable",
-      dvr: {
-    enabled: true,
-    liveTimeout: 1800000, // Maximum time in milliseconds for users to rewind (e.g., 30 minutes)
-  },
+      
       skin: {
         name: "netflix"
       },
@@ -86,6 +83,10 @@
         sources: [{
           file: "https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8"
         }]
+        dvr: {
+    enabled: true,
+    liveTimeout: 1800000, // Maximum time in milliseconds for users to rewind (e.g., 30 minutes)
+  }
       }],
       advertising: {
         client: "vast",
