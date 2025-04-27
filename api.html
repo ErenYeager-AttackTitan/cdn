@@ -10,10 +10,10 @@
 <h1>Upload Video</h1>
 
 <!-- Form for video upload -->
-<form id="uploadForm" method="POST" enctype="multipart/form-data">
+<form id="uploadForm" method="POST" enctype="multipart/form-data" target="_blank">
     <label for="videoFile">Choose video to upload:</label>
     <input type="file" id="videoFile" name="file" required><br><br>
-    
+
     <button type="submit">Upload Video</button>
 </form>
 
@@ -29,41 +29,17 @@
         }
     }
 
-    // When the form is submitted, handle the video upload
-    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
-        event.preventDefault();  // Prevent the default form submission
-
+    // When the page loads, get the upload URL and set the form action dynamically
+    window.onload = async () => {
         const uploadUrl = await getUploadUrl();  // Get the server URL for upload
 
-        if (!uploadUrl) {
+        if (uploadUrl) {
+            const form = document.getElementById('uploadForm');
+            form.action = uploadUrl;  // Set form action to the upload URL from VidGuard API
+        } else {
             alert('Error fetching upload URL');
-            return;
         }
-
-        // Prepare the form data with the video file and required fields
-        const formData = new FormData();
-        formData.append('file', document.getElementById('videoFile').files[0]);
-        formData.append('key', '9bgr80DjkwmMq75LjXmEXPBYV2JWLvZa3z');  // API Key
-        formData.append('folder', '86555');  // Folder ID (updated)
-
-        // Use fetch to send the data to the obtained upload URL
-        try {
-            const response = await fetch(uploadUrl, {
-                method: 'POST',
-                body: formData
-            });
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Video uploaded successfully!');
-            } else {
-                alert('Error uploading video.');
-            }
-        } catch (error) {
-            console.error('Error uploading video:', error);
-            alert('Error uploading video.');
-        }
-    });
+    };
 </script>
 
 </body>
