@@ -130,7 +130,7 @@
             chunkSize: 1024 * 1024 * 85, // 85MB chunks
             chunkForce: true,
             server: {
-                url: '/v1/upload/server?chunk=true&key=' + api_key,
+                url: 'https://api.vidguard.to/v1/upload/server?chunk=true&key=' + api_key,
                 process: {
                     ondata: (fd) => {
                         fd.append('key', api_key); // Append API key to the file data
