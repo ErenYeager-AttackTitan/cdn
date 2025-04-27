@@ -1,46 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Video</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Web Upload - VidGuard</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Custom Styles for simplicity -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #filepond {
+            margin-bottom: 20px;
+        }
+
+        #uploadURLs {
+            height: 200px;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+
+    <!-- FilePond Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/filepond/dist/filepond.min.css" rel="stylesheet">
+
+    <!-- FilePond JS -->
+    <script src="https://cdn.jsdelivr.net/npm/filepond/dist/filepond.min.js"></script>
+
 </head>
+
 <body>
 
-<h1>Upload Video</h1>
+    <div class="container">
+        <h2>Upload Video to VidGuard</h2>
 
-<!-- Form for video upload -->
-<form id="uploadForm" method="POST" enctype="multipart/form-data">
-    <label for="videoFile">Choose video to upload:</label>
-    <input type="file" id="videoFile" name="file" required><br><br>
+        <div class="form-group">
+            <label for="filepond">Choose Video File</label>
+            <input type="file" id="filepond" name="file" multiple />
+        </div>
 
-    <button type="submit">Upload Video</button>
-</form>
+        <div class="form-group">
+            <label for="folder">Save to Folder</label>
+            <select id="folder" name="folder" class="form-control">
+                <option value="86555">anime</option>
+                <option value="86556">test</option>
+            </select>
+        </div>
 
-<script>
-    // Function to fetch the upload URL from VidGuard API
-    async function getUploadUrl() {
-        try {
-            const response = await fetch('https://api.vidguard.to/v1/upload/server?key=9bgr80DjkwmMq75LjXmEXPBYV2JWLvZa3z');
-            const data = await response.json();
-            return data.result.url;
-        } catch (error) {
-            console.error('Error fetching upload URL:', error);
-        }
-    }
+        <div class="form-group">
+            <label for="uploadURLs">Uploaded Video URLs</label>
+            <textarea id="uploadURLs" class="form-control" rows="8" readonly></textarea>
+        </div>
 
-    // When the page loads, get the upload URL and set the form action dynamically
-    window.onload = async () => {
-        const uploadUrl = await getUploadUrl();  // Get the server URL for upload
+        <button id="copyURLs" class="btn">Copy URLs</button>
 
-        if (uploadUrl) {
-            const form = document.getElementById('uploadForm');
-            form.action = uploadUrl;  // Set form action to the upload URL from VidGuard API
-        } else {
-            alert('Error fetching upload URL');
-        }
-    };
-</script>
+    </div>
+
+    <script>
+        // Initialize FilePond
+        const api_key = "9bgr80DjkwmMq75LjXmEXPBYV2JWLvZa3z"; // Hardcoded API key
+
+        // Set up FilePond to handle file uploads
+        FilePond.create(document.querySelector('#filepond'), {
+            labelTapToUndo: "Click to cancel",
+            maxParallelUploads: 5,
+            chunkUploads: true,
+            chunkSize: 1024 * 1024 * 85, // 85MB chunks
+            chunkForce: true,
+            server: {
+                url: '/v1/upload/server?chunk=true&key=' + api_key,
+                process: {
+                    ondata: (fd) => {
+                        fd.append('key', api_key); // Append API key to the file data
+                        return fd;
+                    },
+                },
+                patch: {
+                    url: '?key=' + api_key + '&id=',
+                    onupdate: (url) => {
+                        return url + '&folder=' + document.getElementById('folder').value;
+                    },
+                    onload: (response) => {
+                        try {
+                            const json = JSON.parse(response);
+                            const url = json.result.URL;
+                            // Append the video URL to the textarea
+                            document.getElementById('uploadURLs').value += url + "\n";
+                        } catch (e) {
+                            console.error("Error parsing response:", e);
+                        }
+                    },
+                },
+            },
+        });
+
+        // Copy URLs to clipboard
+        document.getElementById('copyURLs').addEventListener('click', function () {
+            const text = document.getElementById('uploadURLs').value;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            alert("URLs copied to clipboard!");
+        });
+
+    </script>
+
+    <footer class="footer">
+        <p>&copy; 2025 VidGuard. All rights reserved.</p>
+    </footer>
 
 </body>
+
 </html>
