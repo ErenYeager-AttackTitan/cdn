@@ -18,7 +18,7 @@ This is a private CDN used for personal projects including:
 - Custom scripts and styles
 - Static files for websites and apps
 
-Inspired by the legendary **Mikasa Ackerman** from Attack on Titan.
+Inspired by the legendary Goat **Mikasa Ackerman** from Attack on Titan.
 
 ## Example Usage
 
