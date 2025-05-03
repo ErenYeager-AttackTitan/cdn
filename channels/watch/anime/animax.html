@@ -62,7 +62,7 @@ fetch('https://jiotv.data.cdn.jio.com/apis/v1.3/getepg/get?offset=0&channel_id=2
   .then(res => res.json())
   .then(data => {
     const now = Date.now();
-    const baseUrl = 'https://jiotvimages.cdn.jio.com/dare_images/shows/700/-/';
+    const baseUrl = 'https://jiotvimages.cdn.jio.com/dare_images/shows/800/-/';
     const episode = data.epg.find(ep => now >= ep.startEpoch && now < ep.endEpoch);
     if (episode && episode.episodeThumbnail) {
       episodePoster = baseUrl + episode.episodeThumbnail;
