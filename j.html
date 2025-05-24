@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Gang Control Panel</title>
   <style>
     body { font-family: Arial; padding: 20px; background: #111; color: white; }
@@ -14,13 +14,13 @@
 
   <div id="auth">
     <h2>Register</h2>
-    <input id="reg-user" placeholder="Username">
-    <input id="reg-pass" placeholder="Password" type="password">
+    <input id="reg-user" placeholder="Username" />
+    <input id="reg-pass" type="password" placeholder="Password" />
     <button onclick="register()">Sign Up</button>
 
     <h2>Login</h2>
-    <input id="log-user" placeholder="Username">
-    <input id="log-pass" placeholder="Password" type="password">
+    <input id="log-user" placeholder="Username" />
+    <input id="log-pass" type="password" placeholder="Password" />
     <button onclick="login()">Login</button>
   </div>
 
@@ -31,7 +31,7 @@
     <button onclick="getSecret()">Enter Secret Gang Room</button>
 
     <h3>Promote Member</h3>
-    <input id="promote-user" placeholder="Username to promote">
+    <input id="promote-user" placeholder="Username to promote" />
     <button onclick="promote()">Promote to Leader</button>
   </div>
 
@@ -46,7 +46,13 @@
       if (auth) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-          const res = JSON.parse(xhr.responseText || '{}');
+          let res;
+          try {
+            res = JSON.parse(xhr.responseText);
+          } catch (e) {
+            console.error('JSON parse error:', e);
+            res = {};
+          }
           callback(xhr.status, res);
         }
       };
@@ -54,26 +60,36 @@
     }
 
     function register() {
-      const username = document.getElementById('reg-user').value;
-      const password = document.getElementById('reg-pass').value;
+      const username = document.getElementById('reg-user').value.trim();
+      const password = document.getElementById('reg-pass').value.trim();
+
+      if (!username || !password) {
+        alert('Please fill both username and password.');
+        return;
+      }
 
       ajax('POST', `${API}/register`, { username, password }, false, (status, res) => {
-        alert(res.message);
+        alert(res.message || 'Registration failed');
       });
     }
 
     function login() {
-      const username = document.getElementById('log-user').value;
-      const password = document.getElementById('log-pass').value;
+      const username = document.getElementById('log-user').value.trim();
+      const password = document.getElementById('log-pass').value.trim();
+
+      if (!username || !password) {
+        alert('Please fill both username and password.');
+        return;
+      }
 
       ajax('POST', `${API}/login`, { username, password }, false, (status, res) => {
-        if (status === 200) {
+        if (status === 200 && res.token) {
           token = res.token;
           document.getElementById('auth').classList.add('hidden');
           document.getElementById('dashboard').classList.remove('hidden');
           document.getElementById('status').textContent = 'Logged in successfully.';
         } else {
-          alert(res.message);
+          alert(res.message || 'Login failed');
         }
       });
     }
@@ -85,13 +101,17 @@
     }
 
     function promote() {
-      const username = document.getElementById('promote-user').value;
+      const username = document.getElementById('promote-user').value.trim();
+
+      if (!username) {
+        alert('Please enter a username to promote.');
+        return;
+      }
 
       ajax('POST', `${API}/promote`, { username }, true, (status, res) => {
-        alert(res.message || 'Failed to promote');
+        alert(res.message || 'Promotion failed');
       });
     }
   </script>
 </body>
-    </html>
-  
+</html>
