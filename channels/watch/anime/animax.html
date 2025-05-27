@@ -20,34 +20,6 @@
 </head>
 
 <body>
-  <style>
-    .wrap #player {
-      position: absolute;
-      height: 100% !important;
-      width: 100% !important;
-    }
-
-    .wrap .btn {
-      position: absolute;
-      top: 15%;
-      left: 90%;
-      transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-      background-color: white;
-      color: black;
-      font-size: 12px;
-      padding: 6px 12px;
-      border: 1px solid white;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    @media screen and (max-width:600px) {
-      .wrap .btn {
-        font-size: 8px;
-      }
-    }
-  </style>
 
   <div class="wrap">
     <div id="player"></div>
@@ -94,14 +66,7 @@ fetch('https://jiotv.data.cdn.jio.com/apis/v1.3/getepg/get?offset=0&channel_id=2
             file: "",
             label: ""
           }],
-          captions: {
-    color: "#FFFFFF",         // Text color
-    fontSize: 16,             // Font size in px
-    backgroundOpacity: 50,    // Background transparency (0–100)
-    backgroundColor: "#000000",
-    fontFamily: "sans-serif",
-    edgeStyle: "raised"       // Options: 'none', 'dropshadow', 'raised', 'depressed'
-          },
+          
           sources: [{
             file: "https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8"
           }]
@@ -112,18 +77,8 @@ fetch('https://jiotv.data.cdn.jio.com/apis/v1.3/getepg/get?offset=0&channel_id=2
             offset: "pre",
             tag: ""
           }]
-        },
-        "captionStyle": {
-       "fontFamily": "Arial, Helvetica, sans-serif",
-       "fontSize": "20px",
-       "fontColor": "#FFFFFF",
-       "backgroundColor": "#000000",
-       "outlineColor": "#FF0000",
-       "outlineWidth": "2px",
-       "outlineBlur": "4px",
-       "shadowColor": "#000000",
-       "shadowBlur": "6px"
         }
+        
       });
 
       playerInstance.on("ready", function () {
