@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JWPlayer - ClearKey DRM Streams</title>
+  <script src="https://cdn.jwplayer.com/libraries/aVr2lJgW.js"></script>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    jwplayer("player").setup({
+      width: "100%",
+      aspectratio: "16:9",
+      autostart: true,
+      playlist: [
+        {
+          title: "Qualifier 2 - FHD",
+          file: "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/smgpde3rgj/out/v1/c157f6abdf7144e8b27b7e9606bb12e5/cenc.mpd",
+          type: "dash",
+          drm: {
+            clearkey: {
+              "bd74ff294257904a0d344d19cb3cfcb6": "15889071f933f375b4c2734579b7eb31"
+            }
+          }
+        },
+        {
+          title: "Qualifier 2 - SD",
+          file: "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash-sd/enc/xsrmroltaz/out/v1/9148f141b15043ac8a86a93b0019b0ec/cenc-sd.mpd",
+          type: "dash",
+          drm: {
+            clearkey: {
+              "ea63a54ff93792486b981868c3b92fda": "2c206413e5f23d16c304a3885947689e"
+            }
+          }
+        }
+      ]
+    });
+  </script>
+</body>
+  </html>
+  
