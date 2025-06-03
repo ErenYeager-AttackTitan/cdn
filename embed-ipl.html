@@ -1,0 +1,24 @@
+<div id="jwplayer"></div>
+
+<script src="https://cdn.jwplayer.com/libraries/aVr2lJgW.js"></script>
+<script>
+  jwplayer("jwplayer").setup({
+    file: "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd",
+    type: "dash",
+    width: "100%",
+    aspectratio: "16:9",
+    autostart: false,
+    captions: {
+      color: "#FFFFFF",
+      fontSize: 14,
+      backgroundOpacity: 0,
+      edgeStyle: "raised"
+    },
+    // DRM (NOTE: ClearKey not supported natively by JWPlayer)
+    drm: {
+      clearkey: {
+        "1779c27b9d077a3ba0c9cc1bb9a94b9f": "cc5cf3b7928fb9e0a1ee6a8b566f0a8e"
+      }
+    }
+  });
+</script>
