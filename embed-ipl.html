@@ -1,58 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shaka Player</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css" />
+  <meta charset="UTF-8">
+  <title>Basic Shaka Player</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.compiled.min.js"></script>
   <style>
     body {
       margin: 0;
       background-color: #000;
-    }
-    .shaka-video-container {
-      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       height: 100vh;
     }
     video {
       width: 100%;
-      height: 100%;
-    }
-    .shaka-controls-container {
-      background: rgba(0, 0, 0, 0.6);
+      max-width: 1000px;
+      height: auto;
     }
   </style>
 </head>
 <body>
-  <div class="shaka-video-container" data-shaka-player>
-    <video autoplay muted id="video" poster="" playsinline></video>
-  </div>
+  <video id="video" autoplay controls></video>
 
   <script>
-    const manifestUri = "https://goodproxy.eren-yeager-founding-titan-9.workers.dev/fetch?url=https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd";
+    const manifestUri = "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd";
 
     const keyId = "1779c27b9d077a3ba0c9cc1bb9a94b9f";
     const key = "cc5cf3b7928fb9e0a1ee6a8b566f0a8e";
 
     async function initPlayer() {
       const video = document.getElementById('video');
-      const player = new shaka.Player(video);
-
-      const ui = video['ui'];
-      ui.configure({
-        controlPanelElements: [
-          'play_pause', 'time_and_duration', 'mute', 'volume', 'fullscreen', 'overflow_menu'
-        ],
-        overflowMenuButtons: ['captions', 'quality', 'language', 'statistics'],
-      });
 
       shaka.polyfill.installAll();
 
       if (!shaka.Player.isBrowserSupported()) {
-        console.error('Browser not supported!');
+        console.error('Shaka Player not supported');
         return;
       }
+
+      const player = new shaka.Player(video);
 
       player.configure({
         drm: {
@@ -61,12 +48,8 @@
           }
         },
         streaming: {
-          bufferingGoal: 10,
-          rebufferingGoal: 2,
           lowLatencyMode: true,
-        },
-        abr: {
-          enabled: true
+          bufferingGoal: 10,
         }
       });
 
@@ -74,13 +57,13 @@
 
       try {
         await player.load(manifestUri);
-        console.log('Video loaded!');
+        console.log('Video loaded');
       } catch (e) {
-        console.error('Load error', e);
+        console.error('Load failed', e);
       }
     }
 
-    document.addEventListener('shaka-ui-loaded', initPlayer);
+    document.addEventListener('DOMContentLoaded', initPlayer);
   </script>
 </body>
 </html>
