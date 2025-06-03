@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DRM Video Player - ClearKey</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.compiled.min.js"></script>
+  <style>
+    body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    video { width: 80%; max-height: 80vh; }
+  </style>
+</head>
+<body>
+  <video id="video" controls autoplay></video>
+
+  <script>
+    const manifestUri = "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash-sd/enc/sqxzntznhn/out/v1/23fd656f4d394fffa1f2fa0bcdb21d70/cenc-sd.mpd";
+
+    async function initApp() {
+      await shaka.polyfill.installAll();
+
+      if (shaka.Player.isBrowserSupported()) {
+        initPlayer();
+      } else {
+        console.error('Browser not supported!');
+      }
+    }
+
+    async function initPlayer() {
+      const video = document.getElementById('video');
+      const player = new shaka.Player(video);
+
+      // Listen for error events.
+      player.addEventListener('error', (e) => console.error(e.detail));
+
+      // Configure DRM with ClearKey
+      player.configure({
+        drm: {
+          clearKeys: {
+            "a374d4f24f5a101203c2d714adeac805": "1a34df7de436868747bd29fab5bc7cbc"
+          }
+        }
+      });
+
+      try {
+        await player.load(manifestUri);
+        console.log('The video has now been loaded!');
+      } catch (e) {
+        console.error('Error loading video:', e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
