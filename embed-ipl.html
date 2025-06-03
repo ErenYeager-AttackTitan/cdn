@@ -1,24 +1,84 @@
-<div id="jwplayer"></div>
-
-<script src="https://cdn-jwplayer.netlify.app/aVr2lJgW.js"></script>
-<script>
-  jwplayer("jwplayer").setup({
-    file: "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd",
-    type: "dash",
-    width: "100%",
-    aspectratio: "16:9",
-    autostart: false,
-    captions: {
-      color: "#FFFFFF",
-      fontSize: 14,
-      backgroundOpacity: 0,
-      edgeStyle: "raised"
-    },
-    // DRM (NOTE: ClearKey not supported natively by JWPlayer)
-    drm: {
-      clearkey: {
-        "1779c27b9d077a3ba0c9cc1bb9a94b9f": "cc5cf3b7928fb9e0a1ee6a8b566f0a8e"
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Player</title>
+  <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-dash@2/dash.js"></script>
+  <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
     }
-  });
-</script>
+
+    .video-js.vjs-custom-skin {
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .vjs-control-bar {
+      background: rgba(30, 30, 30, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .vjs-play-progress, .vjs-volume-level {
+      background-color: #ff0000;
+    }
+
+    .vjs-big-play-button {
+      background-color: rgba(255, 0, 0, 0.8);
+      border: none;
+      font-size: 3em;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      line-height: 80px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+
+  <video
+    id="my-video"
+    class="video-js vjs-custom-skin"
+    controls
+    autoplay
+    preload="auto"
+    width="100%"
+    height="100%"
+    data-setup='{}'
+  ></video>
+
+  <script>
+    const player = videojs('my-video', {
+      techOrder: ['dash', 'html5'],
+      autoplay: true,
+      controls: true,
+      fluid: true,
+      sources: [{
+        src: "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd",
+        type: "application/dash+xml",
+        keySystemOptions: [{
+          name: "org.w3.clearkey",
+          options: {
+            clearkeys: {
+              "1779c27b9d077a3ba0c9cc1bb9a94b9f": "cc5cf3b7928fb9e0a1ee6a8b566f0a8e"
+            }
+          }
+        }]
+      }]
+    });
+
+    player.ready(function () {
+      console.log("Player loaded and ready");
+    });
+  </script>
+
+</body>
+</html>
