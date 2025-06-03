@@ -1,5 +1,6 @@
 # Mikasa Ackerman CDN
 
+
 `“This World Is Cruel”`
 
 
@@ -9,7 +10,8 @@ Hosted at:
 **[https://mikasa-ackerman-cdn.pages.dev](https://mikasa-ackerman-cdn.pages.dev)**
 
 #Animax Features
-`Animax PWA added`
+`Animax PWA added`,
+`Sony YaY added`
 
 ## About
 
