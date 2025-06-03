@@ -2,83 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Video Player</title>
-  <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
-  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-dash@2/dash.js"></script>
-  <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shaka Player</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css" />
   <style>
     body {
       margin: 0;
       background-color: #000;
     }
-
-    .video-js.vjs-custom-skin {
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
+    .shaka-video-container {
+      width: 100%;
+      height: 100vh;
     }
-
-    .vjs-control-bar {
-      background: rgba(30, 30, 30, 0.7);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    video {
+      width: 100%;
+      height: 100%;
     }
-
-    .vjs-play-progress, .vjs-volume-level {
-      background-color: #ff0000;
-    }
-
-    .vjs-big-play-button {
-      background-color: rgba(255, 0, 0, 0.8);
-      border: none;
-      font-size: 3em;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      line-height: 80px;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+    .shaka-controls-container {
+      background: rgba(0, 0, 0, 0.6);
     }
   </style>
 </head>
 <body>
-
-  <video
-    id="my-video"
-    class="video-js vjs-custom-skin"
-    controls
-    autoplay
-    preload="auto"
-    width="100%"
-    height="100%"
-    data-setup='{}'
-  ></video>
+  <div class="shaka-video-container" data-shaka-player>
+    <video autoplay muted id="video" poster="" playsinline></video>
+  </div>
 
   <script>
-    const player = videojs('my-video', {
-      techOrder: ['dash', 'html5'],
-      autoplay: true,
-      controls: true,
-      fluid: true,
-      sources: [{
-        src: "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd",
-        type: "application/dash+xml",
-        keySystemOptions: [{
-          name: "org.w3.clearkey",
-          options: {
-            clearkeys: {
-              "1779c27b9d077a3ba0c9cc1bb9a94b9f": "cc5cf3b7928fb9e0a1ee6a8b566f0a8e"
-            }
+    const manifestUri = "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd";
+
+    const keyId = "1779c27b9d077a3ba0c9cc1bb9a94b9f";
+    const key = "cc5cf3b7928fb9e0a1ee6a8b566f0a8e";
+
+    async function initPlayer() {
+      const video = document.getElementById('video');
+      const player = new shaka.Player(video);
+
+      const ui = video['ui'];
+      ui.configure({
+        controlPanelElements: [
+          'play_pause', 'time_and_duration', 'mute', 'volume', 'fullscreen', 'overflow_menu'
+        ],
+        overflowMenuButtons: ['captions', 'quality', 'language', 'statistics'],
+      });
+
+      shaka.polyfill.installAll();
+
+      if (!shaka.Player.isBrowserSupported()) {
+        console.error('Browser not supported!');
+        return;
+      }
+
+      player.configure({
+        drm: {
+          clearKeys: {
+            [keyId]: key
           }
-        }]
-      }]
-    });
+        },
+        streaming: {
+          bufferingGoal: 10,
+          rebufferingGoal: 2,
+          lowLatencyMode: true,
+        },
+        abr: {
+          enabled: true
+        }
+      });
 
-    player.ready(function () {
-      console.log("Player loaded and ready");
-    });
+      player.addEventListener('error', e => console.error('Error:', e.detail));
+
+      try {
+        await player.load(manifestUri);
+        console.log('Video loaded!');
+      } catch (e) {
+        console.error('Load error', e);
+      }
+    }
+
+    document.addEventListener('shaka-ui-loaded', initPlayer);
   </script>
-
 </body>
 </html>
