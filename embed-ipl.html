@@ -1,105 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Shaka Player with Seek Bar</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css" />
+  <meta charset="UTF-8">
+  <title>Video.js Player</title>
+  <!-- Video.js Core -->
+  <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+
+  <!-- DASH Support -->
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-dash@2.11.0/dist/videojs-dash.min.js"></script>
+
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%; background: #000;
-      overflow: hidden;
+    body {
+      margin: 0;
+      background: #000;
     }
-    .shaka-video-container {
-      width: 100%;
+    .vjs-custom-skin .vjs-control-bar {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .vjs-custom-skin .vjs-play-progress,
+    .vjs-custom-skin .vjs-volume-level {
+      background-color: #e50914 !important;
+    }
+    .vjs-custom-skin .vjs-slider {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .video-js {
+      width: 100vw;
       height: 100vh;
-      position: relative;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background-color: #000;
-    }
-    .shaka-controls-container {
-      background: rgba(0, 0, 0, 0.7);
-    }
-    /* Explicitly style seek bar so it’s visible */
-    .shaka-seek-bar-container {
-      display: flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      height: 30px !important;
     }
   </style>
 </head>
 <body>
-  <div class="shaka-video-container" data-shaka-player-container>
-    <video id="video" autoplay controls data-shaka-player></video>
-  </div>
+
+  <video id="my-player" class="video-js vjs-custom-skin" controls preload="auto"></video>
 
   <script>
-    const manifestUri = "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd";
-    const keyId = "1779c27b9d077a3ba0c9cc1bb9a94b9f";
-    const key = "cc5cf3b7928fb9e0a1ee6a8b566f0a8e";
-
-    async function initPlayer() {
-      const video = document.getElementById('video');
-      const player = new shaka.Player(video);
-      const ui = video['ui'];
-      const controls = ui.getControls();
-
-      player.configure({
-        drm: {
-          clearKeys: {
-            [keyId]: key
-          }
-        },
-        streaming: {
-          bufferingGoal: 10,
-          rebufferingGoal: 2,
-          lowLatencyMode: true,
-          retryParameters: {
-            maxAttempts: 5,
-            baseDelay: 500,
-            backoffFactor: 1.5,
-            timeout: 10000
-          }
-        },
-        abr: {
-          enabled: true,
-          switchInterval: 5,
-          bandwidthUpgradeTarget: 1.1
-        }
-      });
-
-      ui.configure({
-        addSeekBar: true,
-        controlPanelElements: [
-          'play_pause', 'mute', 'time_and_duration', 'fullscreen', 'overflow_menu'
-        ],
-        overflowMenuButtons: [
-          'captions', 'quality', 'language', 'statistics', 'picture_in_picture'
-        ],
-        seekBarColors: {
-          base: 'rgba(255,255,255,0.2)',
-          buffered: 'rgba(255,255,255,0.4)',
-          played: '#e50914'
-        }
-      });
-
-      player.addEventListener('error', e => console.error('Player error:', e.detail));
-      controls.addEventListener('error', e => console.error('UI error:', e.detail));
-
-      try {
-        await player.load(manifestUri);
-        console.log('Video loaded successfully');
-      } catch (error) {
-        console.error('Load failed', error);
+    const player = videojs('my-player', {
+      techOrder: ['dash', 'html5'],
+      autoplay: true,
+      controls: true,
+      fluid: true,
+      dash: {
+        debug: false
+      },
+      html5: {
+        nativeTextTracks: false
       }
-    }
+    });
 
-    document.addEventListener('shaka-ui-loaded', initPlayer);
+    player.src({
+      src: "https://abmyxykaaaaaaaamkyvb65fuqebyg.7a77200bf98444ac997a89ed83775793.emt.cf.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/f60kqesunw/out/v1/a435ed7a00f947deb4369b46d8f2fb70/cenc.mpd",
+      type: "application/dash+xml",
+      keySystems: {
+        "org.w3.clearkey": {
+          "1779c27b9d077a3ba0c9cc1bb9a94b9f": "cc5cf3b7928fb9e0a1ee6a8b566f0a8e"
+        }
+      }
+    });
+
+    player.ready(() => {
+      console.log('Player ready!');
+    });
   </script>
 </body>
 </html>
