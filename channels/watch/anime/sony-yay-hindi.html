@@ -48,7 +48,7 @@
 
   <script>
     async function loadFinalM3U8() {
-      const redirectUrl = "https://pubads.g.doubleclick.net/ssai/event/40H5HfwWTZadFGYkBTqagg/master.m3u8";
+      const redirectUrl = "https://amg01448-samsungin-cartoonnw-samsungin-1y8kz.amagi.tv/playlist/amg01448-samsungin-cartoonnw-samsungin/playlist.m3u8";
 
       try {
         const response = await fetch(redirectUrl, { method: "GET", redirect: "follow" });
@@ -83,19 +83,19 @@
         displaytitle: true,
         displaydescription: true,
         abouttext: "Animax",
-        aboutlink: "https://mikasa-ackerman-cdn.pages.dev/channels/watch/anime/sony-yay-hindi",
+        aboutlink: "https://mikasa-ackerman-cdn.pages.dev/channels/watch/anime/cn",
         autostart: "viewable",
         skin: { name: "netflix" },
         logo: {
           file: "",
-          link: "https://mikasa-ackerman-cdn.pages.dev/channels/watch/anime/sony-yay-hindi"
+          link: "https://mikasa-ackerman-cdn.pages.dev/channels/watch/anime/cn"
         },
         fullscreen: true,
         playlist: [{
           title: "SonyYAY Hindi",
           description: "You're Watching",
           image: episodePoster,
-          sources: [{ file: finalUrl }]
+          sources: [{ file: `https://amg01448-samsungin-cartoonnw-samsungin-1y8kz.amagi.tv/playlist/amg01448-samsungin-cartoonnw-samsungin/playlist.m3u8` }]
         }],
         advertising: {
           client: "vast",
