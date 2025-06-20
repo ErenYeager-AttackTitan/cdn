@@ -12,6 +12,7 @@ Hosted at:
 #Animax Features
 `Animax PWA added`,
 `Sony YaY added`
+`nhentai api routes`
 
 ## About
 
