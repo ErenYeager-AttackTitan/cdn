@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>YouTube IFrame API Player</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+    }
+    #player {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    function getVideoId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("id") || "JDikyBiKRgc"; // Default fallback video ID
+    }
+
+    let player;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        videoId: getVideoId(),
+        playerVars: {
+          autoplay: 1,
+          controls: 1,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          cc_load_policy: 1,
+          playsinline: 1
+        },
+        events: {
+          onReady: (event) => {
+            event.target.mute(); // Mute to allow autoplay
+            event.target.playVideo();
+          },
+          onStateChange: (event) => {
+            // Optional auto-replay
+            if (event.data === YT.PlayerState.ENDED) {
+              player.seekTo(0);
+              player.playVideo();
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
