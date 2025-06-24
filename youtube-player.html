@@ -7,8 +7,8 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
       background: #000;
+      height: 100%;
     }
     #player {
       width: 100vw;
@@ -19,18 +19,32 @@
 <body>
   <div id="player"></div>
 
+  <!-- Load YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
+
   <script>
+    // Parse and sanitize YouTube video ID
     function getVideoId() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("id") || "JDikyBiKRgc"; // Default fallback video ID
+      const params = new URLSearchParams(location.search);
+      let raw = params.get("id");
+
+      if (!raw) return "JDikyBiKRgc"; // fallback default
+
+      // If full URL is passed, extract the video ID
+      const ytRegex = /(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+      const match = raw.match(ytRegex);
+      if (match) return match[1];
+
+      // Else assume it's just the ID
+      return raw;
     }
 
     let player;
 
     function onYouTubeIframeAPIReady() {
+      const videoId = getVideoId();
       player = new YT.Player('player', {
-        videoId: getVideoId(),
+        videoId: videoId,
         playerVars: {
           autoplay: 1,
           controls: 1,
@@ -42,15 +56,9 @@
         },
         events: {
           onReady: (event) => {
-            event.target.mute(); // Mute to allow autoplay
+            // Mute to allow autoplay
+            event.target.mute();
             event.target.playVideo();
-          },
-          onStateChange: (event) => {
-            // Optional auto-replay
-            if (event.data === YT.PlayerState.ENDED) {
-              player.seekTo(0);
-              player.playVideo();
-            }
           }
         }
       });
