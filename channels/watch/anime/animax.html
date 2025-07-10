@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+q<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -57,6 +57,9 @@
   <script>
 
 let episodePoster = '';
+let showname = '';
+let description = '';
+    
 
 fetch('https://jiotv.data.cdn.jio.com/apis/v1.3/getepg/get?offset=0&channel_id=2258')
   .then(res => res.json())
@@ -65,6 +68,8 @@ fetch('https://jiotv.data.cdn.jio.com/apis/v1.3/getepg/get?offset=0&channel_id=2
     const baseUrl = 'https://ik.imagekit.io/ani1/https://jiotvimages.cdn.jio.com/dare_images/shows/2560/-/';
     const episode = data.epg.find(ep => now >= ep.startEpoch && now < ep.endEpoch);
     if (episode && episode.episodePoster) {
+      showname = episode.showname || 'Unknown Show';
+      description = episode.description || 'No description';
       episodePoster = baseUrl + episode.episodePoster;
       console.log('Current Episode Poster:', episodePoster);
 
@@ -86,8 +91,8 @@ fetch('https://jiotv.data.cdn.jio.com/apis/v1.3/getepg/get?offset=0&channel_id=2
         },
         fullscreen: true,
         playlist: [{
-          title: "ANIMAX",
-          description: "You're Watching",
+          title: showname,
+          description: description,
           image: episodePoster,
           tracks: [{
             kind: "captions",
