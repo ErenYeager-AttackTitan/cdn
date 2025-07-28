@@ -1,17 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Student Contract Agreement</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background: #f9f9f9; }
-    input, textarea { width: 100%; padding: 10px; margin: 5px 0; }
-    canvas { border: 1px solid #ccc; width: 100%; height: 150px; background: white; }
-    h2 { border-bottom: 1px solid #aaa; padding-bottom: 5px; margin-top: 30px; }
-    .signature-section { margin-bottom: 30px; }
-    .student-block { margin-bottom: 25px; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 6px; }
-    button { padding: 10px 15px; margin-top: 10px; cursor: pointer; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+      max-width: 900px;
+      margin: auto;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    canvas {
+      width: 100%;
+      height: 150px;
+      border: 1px solid #999;
+      border-radius: 4px;
+      background: white;
+    }
+    .signature-section, .student-block {
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 0;
+      cursor: pointer;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .remove-btn {
+      background: #dc3545;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -19,55 +61,66 @@
 <div id="contract">
   <h1>📝 Student Contract Agreement</h1>
 
-  <p><b>Date:</b> <input type="date" /></p>
+  <label>Date:</label>
+  <input type="date" />
 
   <h2>📜 Agreement Terms</h2>
-  <textarea rows="4" placeholder="Example: Each participant agrees to clean the classroom every Friday."></textarea>
+  <textarea placeholder="Example: All participants agree to complete their assigned roles on the project."></textarea>
 
   <h2>⚖️ Consequences if Broken</h2>
-  <textarea rows="3" placeholder="Example: Anyone who fails owes a treat to all others."></textarea>
+  <textarea placeholder="Example: Any student who breaks the contract must give everyone a treat."></textarea>
 
-  <h2>👥 Participants</h2>
+  <h2>👥 Contracting Students</h2>
   <div id="students"></div>
   <button onclick="addStudent()">➕ Add Student</button>
 
-  <h2>✅ Core Group Approval (Required)</h2>
+  <h2>✅ Core Group Approval</h2>
   <div class="signature-section">
-    <p>Member 1 Signature: <canvas id="sigM1"></canvas> <button onclick="clearSig('sigM1')">Clear</button></p>
-    <p>Member 2 Signature: <canvas id="sigM2"></canvas> <button onclick="clearSig('sigM2')">Clear</button></p>
-    <p>Member 3 Signature: <canvas id="sigM3"></canvas> <button onclick="clearSig('sigM3')">Clear</button></p>
+    <label>Member 1 Signature:</label>
+    <canvas id="sigM1"></canvas>
+    <button onclick="clearSig('sigM1')">Clear</button>
+
+    <label>Member 2 Signature:</label>
+    <canvas id="sigM2"></canvas>
+    <button onclick="clearSig('sigM2')">Clear</button>
+
+    <label>Member 3 Signature:</label>
+    <canvas id="sigM3"></canvas>
+    <button onclick="clearSig('sigM3')">Clear</button>
   </div>
 </div>
 
 <button onclick="downloadPDF()">📥 Download as PDF</button>
 
 <script>
-  const pads = {
-    sigM1: new SignaturePad(document.getElementById("sigM1")),
-    sigM2: new SignaturePad(document.getElementById("sigM2")),
-    sigM3: new SignaturePad(document.getElementById("sigM3")),
-  };
-
+  const pads = {};
   let studentCount = 0;
 
+  function resizeCanvas(canvas) {
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+  }
+
   function addStudent() {
-    const container = document.getElementById("students");
     studentCount++;
-
-    const div = document.createElement("div");
-    div.className = "student-block";
-    div.innerHTML = `
-      <p><b>Student ${studentCount} Name:</b> <input type="text" id="studentName${studentCount}" /></p>
-      <p>Signature:</p>
-      <canvas id="studentSig${studentCount}"></canvas>
-      <button onclick="clearSig('studentSig${studentCount}')">Clear</button>
+    const id = `student${studentCount}`;
+    const container = document.createElement("div");
+    container.className = "student-block";
+    container.innerHTML = `
+      <label>Student ${studentCount} Name:</label>
+      <input type="text" id="${id}_name" placeholder="Enter name" />
+      <label>Signature:</label>
+      <canvas id="${id}_sig"></canvas>
+      <button onclick="clearSig('${id}_sig')">Clear</button>
+      <button class="remove-btn" onclick="this.parentElement.remove()">❌ Remove Student</button>
     `;
+    document.getElementById("students").appendChild(container);
 
-    container.appendChild(div);
-
-    // Initialize SignaturePad for this canvas
-    const canvas = div.querySelector(`#studentSig${studentCount}`);
-    pads[`studentSig${studentCount}`] = new SignaturePad(canvas);
+    const canvas = container.querySelector("canvas");
+    resizeCanvas(canvas);
+    pads[`${id}_sig`] = new SignaturePad(canvas);
   }
 
   function clearSig(id) {
@@ -75,25 +128,32 @@
   }
 
   function downloadPDF() {
-    // Convert all canvases to images before generating PDF
+    // Convert all signature pads to images before saving
     Object.entries(pads).forEach(([id, pad]) => {
       const canvas = pad.canvas;
-      const img = document.createElement("img");
       if (!pad.isEmpty()) {
+        const img = document.createElement("img");
         img.src = pad.toDataURL();
         img.style.width = "100%";
         img.style.border = "1px solid #ccc";
-        canvas.replaceWith(img); // Replace canvas with static image
+        canvas.replaceWith(img);
       }
     });
 
     html2pdf().set({
       margin: 10,
-      filename: 'Student_Contract_With_Signatures.pdf',
+      filename: 'Student_Contract_Agreement.pdf',
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(document.getElementById("contract")).save();
   }
+
+  // Initialize core group signature pads with resizing
+  ["sigM1", "sigM2", "sigM3"].forEach(id => {
+    const canvas = document.getElementById(id);
+    resizeCanvas(canvas);
+    pads[id] = new SignaturePad(canvas);
+  });
 </script>
 
 </body>
