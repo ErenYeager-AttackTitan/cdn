@@ -1,114 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Student Contract</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Contract Agreement</title>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f9f9f9;
+      padding: 1rem;
+      background-color: #f8f9fa;
     }
     .contract {
-      background: white;
-      padding: 20px;
       max-width: 800px;
       margin: auto;
-      border: 1px solid #ccc;
+      background: #fff;
+      padding: 1.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
     }
-    h2 { text-align: center; margin-bottom: 10px; }
-    .section { margin: 20px 0; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    canvas {
-      border: 1px solid #000;
-      width: 100%;
-      height: 100px;
-    }
-    .sign-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .sig-box {
-      flex: 1 1 30%;
-    }
-    .button-row {
+    h2 {
       text-align: center;
-      margin-top: 20px;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      width: 100%;
+      height: 150px;
+      border-radius: 5px;
+    }
+    .signature-container {
+      margin-top: 1rem;
+    }
+    .buttons {
+      text-align: center;
+      margin-top: 2rem;
     }
     button {
-      padding: 10px 20px;
-      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 5px;
+      font-size: 1rem;
       cursor: pointer;
     }
-    @media print {
-      body { background: white; }
-      .button-row { display: none; }
+    button:hover {
+      background-color: #0056b3;
+    }
+    @media (max-width: 600px) {
+      .contract {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="contract" id="contract">
     <h2>Student Contract Agreement</h2>
+    <label>Date</label>
+    <input type="date" />
 
-    <div class="section">
-      <label>Date:</label>
-      <input type="date">
+    <label>Student A</label>
+    <input type="text" placeholder="Name of Student A" />
+
+    <label>Student B</label>
+    <input type="text" placeholder="Name of Student B" />
+
+    <label>Agreement Terms</label>
+    <textarea placeholder="Describe the agreement here..."></textarea>
+
+    <label>Consequences if Broken</label>
+    <textarea placeholder="Consequences if not followed..."></textarea>
+
+    <div class="signature-container">
+      <label>Student A Signature</label>
+      <canvas id="sigA"></canvas>
+
+      <label>Student B Signature</label>
+      <canvas id="sigB"></canvas>
+
+      <label>Group Member 1 Approval</label>
+      <canvas id="sigM1"></canvas>
+
+      <label>Group Member 2 Approval</label>
+      <canvas id="sigM2"></canvas>
+
+      <label>Group Member 3 Approval</label>
+      <canvas id="sigM3"></canvas>
     </div>
 
-    <div class="section">
-      <label>Contract Between:</label>
-      <input type="text" placeholder="Student A Name">
-      <input type="text" placeholder="Student B Name">
-    </div>
-
-    <div class="section">
-      <label>Agreement Terms:</label>
-      <textarea style="width: 100%; height: 80px;"></textarea>
-    </div>
-
-    <div class="section">
-      <label>Consequences if Broken:</label>
-      <textarea style="width: 100%; height: 60px;"></textarea>
-    </div>
-
-    <div class="section">
-      <label>Student Parties Signatures:</label>
-      <div id="studentSigs" class="sign-group">
-        <!-- Student sigs here -->
-      </div>
-      <button onclick="addStudentSignature()">➕ Add Student Signature</button>
-    </div>
-
-    <div class="section">
-      <label>Core Group Approval:</label>
-      <div class="sign-group">
-        <div class="sig-box">
-          <label>Member 1</label>
-          <canvas id="sigM1"></canvas>
-        </div>
-        <div class="sig-box">
-          <label>Member 2</label>
-          <canvas id="sigM2"></canvas>
-        </div>
-        <div class="sig-box">
-          <label>Member 3</label>
-          <canvas id="sigM3"></canvas>
-        </div>
-      </div>
+    <div class="buttons">
+      <button onclick="downloadPDF()">Download as PDF</button>
     </div>
   </div>
 
-  <div class="button-row">
-    <button onclick="downloadPDF()">📄 Download as PDF</button>
-  </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
-    const pads = {};
     const resizeCanvas = (canvas) => {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
       canvas.width = canvas.offsetWidth * ratio;
@@ -116,44 +120,24 @@
       canvas.getContext("2d").scale(ratio, ratio);
     };
 
-    ["sigM1", "sigM2", "sigM3"].forEach(id => {
+    const initSignature = (id) => {
       const canvas = document.getElementById(id);
       resizeCanvas(canvas);
-      pads[id] = new SignaturePad(canvas);
-    });
+      return new SignaturePad(canvas);
+    };
 
-    let studentCount = 0;
-
-    function addStudentSignature() {
-      studentCount++;
-      const container = document.getElementById("studentSigs");
-      const div = document.createElement("div");
-      div.className = "sig-box";
-      div.innerHTML = `
-        <label>Student ${studentCount}</label>
-        <canvas id="studentSig${studentCount}"></canvas>
-      `;
-      container.appendChild(div);
-
-      const canvas = div.querySelector("canvas");
-      resizeCanvas(canvas);
-      pads[`studentSig${studentCount}`] = new SignaturePad(canvas);
-    }
+    const sigPads = {
+      sigA: initSignature("sigA"),
+      sigB: initSignature("sigB"),
+      sigM1: initSignature("sigM1"),
+      sigM2: initSignature("sigM2"),
+      sigM3: initSignature("sigM3"),
+    };
 
     function downloadPDF() {
       const element = document.getElementById("contract");
-      html2pdf().set({
-        margin: 0.2,
-        filename: 'student-contract.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      }).from(element).save();
+      html2pdf().from(element).save("student-contract.pdf");
     }
-
-    // Start with 2 students
-    addStudentSignature();
-    addStudentSignature();
   </script>
 </body>
 </html>
