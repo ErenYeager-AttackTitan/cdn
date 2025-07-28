@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Contract Agreement</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; max-width: 800px; margin: auto; }
+    input, textarea { width: 100%; padding: 10px; margin: 5px 0; }
+    h2 { border-bottom: 1px solid #aaa; padding-bottom: 5px; }
+    .signature-block { margin-top: 20px; }
+    button { padding: 10px 15px; margin-top: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<div id="contract">
+  <h1>📝 Student Contract Agreement</h1>
+
+  <p><b>Date:</b> <input type="date" /></p>
+
+  <h2>👥 Contract Between</h2>
+  <p>Student A: <input type="text" /></p>
+  <p>Student B: <input type="text" /></p>
+
+  <h2>📜 Agreement Terms</h2>
+  <textarea rows="4" placeholder="e.g., Student A agrees to return Student B’s calculator by Friday."></textarea>
+
+  <h2>⚖️ Consequences if Broken</h2>
+  <textarea rows="3" placeholder="e.g., Student A owes Student B a treat."></textarea>
+
+  <div class="signature-block">
+    <h2>✍️ Student Signatures</h2>
+    <p>Student A Signature: <input type="text" /></p>
+    <p>Student B Signature: <input type="text" /></p>
+  </div>
+
+  <div class="signature-block">
+    <h2>✅ Core Group Approval (All 3 Required)</h2>
+    <p>Member 1 Signature: <input type="text" /></p>
+    <p>Member 2 Signature: <input type="text" /></p>
+    <p>Member 3 Signature: <input type="text" /></p>
+  </div>
+
+  <h2>📌 Contract Status</h2>
+  <label><input type="radio" name="status" /> Pending Approval</label><br />
+  <label><input type="radio" name="status" /> ✅ Approved</label><br />
+  <label><input type="radio" name="status" /> ❌ Rejected / Void</label>
+</div>
+
+<button onclick="downloadPDF()">📥 Download as PDF</button>
+
+<script>
+  function downloadPDF() {
+    const element = document.getElementById("contract");
+    html2pdf().set({
+      margin: 10,
+      filename: 'Student_Contract_Agreement.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(element).save();
+  }
+</script>
+
+</body>
+    </html>
+    
