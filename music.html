@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Listen.moe Spotify Player</title>
+<title>Listen.moe Player</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
   body {
@@ -14,44 +14,47 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    justify-content: center;
+    align-items: center;
   }
   .player {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    max-width: 400px;
     padding: 1rem;
     text-align: center;
   }
   img.cover {
-    width: 80%;
-    max-width: 300px;
+    width: 100%;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
   .track-info {
     margin-top: 1rem;
   }
+  .track-info h2 {
+    margin: 0.5rem 0 0;
+    font-size: 1.2rem;
+  }
+  .track-info p {
+    margin: 0.3rem 0;
+    color: #b3b3b3;
+  }
   .controls {
     margin-top: 1.5rem;
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
   }
   .controls i {
     font-size: 2rem;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, color 0.2s;
   }
   .controls i:hover {
     transform: scale(1.2);
     color: #1db954;
   }
   @media (max-width: 600px) {
-    img.cover {
-      width: 100%;
-    }
     .controls i {
       font-size: 1.5rem;
     }
@@ -59,36 +62,86 @@
 </style>
 </head>
 <body>
+
 <div class="player">
-  <img id="cover" class="cover" src="fallback.jpg" alt="Album Cover">
+  <img id="cover" class="cover" src="https://cdn.listen.moe/covers/Angel-Beats_image.jpg" alt="Album Cover">
   <div class="track-info">
     <h2 id="title">Loading...</h2>
     <p id="artist">Please wait</p>
   </div>
+
   <div class="controls">
     <i class="fa-solid fa-backward-step" id="prev"></i>
     <i class="fa-solid fa-play" id="play"></i>
     <i class="fa-solid fa-forward-step" id="next"></i>
   </div>
+
+  <audio id="audio" src="https://listen.moe/stream" preload="none"></audio>
 </div>
+
 <script>
+const audio = document.getElementById('audio');
+const playBtn = document.getElementById('play');
+let isPlaying = false;
+
+// Play/Pause Toggle
+playBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    audio.pause();
+    playBtn.classList.replace('fa-pause', 'fa-play');
+  } else {
+    audio.play();
+    playBtn.classList.replace('fa-play', 'fa-pause');
+  }
+  isPlaying = !isPlaying;
+});
+
+// WebSocket for live track info
 let ws;
 function connect() {
   ws = new WebSocket('wss://listen.moe/gateway_v2');
+
+  ws.onopen = () => {
+    console.log("Connected to Listen.moe WebSocket");
+  };
+
   ws.onmessage = event => {
     if (!event.data) return;
     let data;
     try { data = JSON.parse(event.data); } catch(e) { return; }
+
+    if (data.op === 0) {
+      ws.send(JSON.stringify({ op: 9 }));
+      heartbeat(data.d.heartbeat);
+    }
+
     if (data.op === 1 && data.t === 'TRACK_UPDATE') {
       const song = data.d.song;
-      const cover = song.albums?.[0]?.image ? `https://cdn.listen.moe/covers/${song.albums[0].image}` : 'fallback.jpg';
-      document.getElementById('cover').src = cover;
+      const coverUrl = song.albums?.[0]?.image
+        ? `https://cdn.listen.moe/covers/${song.albums[0].image}`
+        : 'https://cdn.listen.moe/covers/default.jpg';
+
+      document.getElementById('cover').src = coverUrl;
       document.getElementById('title').innerText = song.title;
       document.getElementById('artist').innerText = song.artists.map(a => a.name).join(', ');
     }
   };
+
+  ws.onclose = () => {
+    setTimeout(connect, 5000);
+  };
 }
+
+let heartbeatInterval;
+function heartbeat(interval) {
+  clearInterval(heartbeatInterval);
+  heartbeatInterval = setInterval(() => {
+    ws.send(JSON.stringify({ op: 9 }));
+  }, interval);
+}
+
 connect();
 </script>
+
 </body>
 </html>
