@@ -1,49 +1,302 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Music Player</title>
-<link rel="stylesheet" href="https://unpkg.com/aplayer/dist/APlayer.min.css">
-<style>
-  body {
-    background: #0f0f0f;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    color: white;
-  }
-  #player {
-    width: 100%;
-    max-width: 450px;
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Listen.moe — Fullscreen Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#1db954; --glass:rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,#071018 0%, #04111a 100%);color:#e6eef6;overflow:hidden}
+
+    /* Fullscreen blurred cover background */
+    .bg-cover{
+      position:fixed;inset:0;z-index:0;filter:blur(30px) brightness(.45) saturate(1.05);background-size:cover;background-position:center;transition:background-image .6s ease;
+    }
+
+    /* Center stage */
+    .stage{position:relative;z-index:2;height:100vh;display:grid;place-items:center;padding:32px}
+    .player{
+      width:min(1100px,96vw);height:min(680px,88vh);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(0,0,0,0.12));border-radius:18px;box-shadow:0 10px 30px rgba(2,8,23,0.6);display:grid;grid-template-columns:420px 1fr;overflow:hidden;border:1px solid rgba(255,255,255,0.04);
+    }
+
+    /* left cover */
+    .cover-wrap{padding:28px;display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+    .cover{width:340px;height:340px;border-radius:12px;overflow:hidden;box-shadow:0 20px 40px rgba(2,8,23,0.6);background-size:cover;background-position:center;transition:all .6s cubic-bezier(.2,.9,.2,1)}
+    .meta-small{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--muted)}
+
+    /* right area */
+    .right{padding:36px 36px 32px 28px;display:flex;flex-direction:column;gap:18px}
+    .title{font-size:28px;font-weight:800;letter-spacing:-0.02em}
+    .artist{font-size:16px;color:var(--muted);margin-top:6px}
+
+    /* progress */
+    .progress{display:flex;align-items:center;gap:12px;margin-top:14px}
+    .time{font-size:13px;color:var(--muted);width:44px;text-align:center}
+    .bar{flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:99px;position:relative;overflow:hidden}
+    .bar > .filled{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#7ef1b0);border-radius:99px}
+
+    /* controls */
+    .controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px}
+    .btn{width:52px;height:52px;border-radius:999px;background:var(--glass);display:grid;place-items:center;border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:transform .15s ease}
+    .btn:active{transform:scale(.96)}
+    .btn.play{width:78px;height:78px;background:linear-gradient(180deg,#1ef08a,#1db954);color:#042016;font-weight:800;font-size:18px}
+
+    /* right-bottom rows */
+    .bottom{display:flex;gap:18px;align-items:flex-start;margin-top:auto}
+    .col{flex:1;background:rgba(255,255,255,0.02);padding:14px;border-radius:10px}
+    .col h4{margin:0 0 8px 0;font-size:13px;color:var(--muted)}
+    .list{display:flex;flex-direction:column;gap:8px;max-height:160px;overflow:auto}
+    .list .item{display:flex;gap:10px;align-items:center}
+    .small-cover{width:40px;height:40px;border-radius:6px;background-size:cover;background-position:center}
+
+    /* topbar overlay */
+    .topbar{position:absolute;left:24px;top:24px;right:24px;display:flex;justify-content:space-between;align-items:center;z-index:3}
+    .logo{display:flex;gap:12px;align-items:center}
+    .logo .dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(180deg,#ffb86b,#ff6b6b);box-shadow:0 6px 18px rgba(255,107,107,0.2)}
+    .logo .name{font-weight:700}
+
+    /* responsive */
+    @media (max-width:920px){
+      .player{grid-template-columns:1fr;align-items:start;height:auto;padding-bottom:32px}
+      .cover{width:100%;height:56vw;max-height:420px}
+      .cover-wrap{padding:20px}
+    }
+  </style>
 </head>
 <body>
+  <div id="bg" class="bg-cover" style="background-image: linear-gradient(90deg,#071018,#04111a);"></div>
 
-<div id="player"></div>
+  <div class="topbar">
+    <div class="logo"><div class="dot"></div><div class="name">listen.moe — Player</div></div>
+    <div class="meta-small"><div id="listeners">-- listeners</div></div>
+  </div>
 
-<script src="https://unpkg.com/aplayer/dist/APlayer.min.js"></script>
-<script>
-const ap = new APlayer({
-    container: document.getElementById('player'),
-    fixed: false, // set to true if you want it fixed at bottom
-    autoplay: false,
-    theme: '#1db954', // Spotify green
-    loop: 'all',
-    order: 'list',
-    preload: 'none',
-    audio: [{
-        name: 'Live Radio',
-        artist: 'r-a-d.io',
-        url: 'https://relay1.r-a-d.io/main.mp3',
-        cover: 'https://mikasa-ackerman-cdn.pages.dev/d7d24dbc06a9345cd0138e6182e21d3c.jpg',
-        type: 'auto'
-    }]
-});
-</script>
+  <main class="stage">
+    <div class="player" role="application" aria-label="Music player">
+      <div class="cover-wrap">
+        <div id="cover" class="cover" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'800\'><rect width=\'100%\' height=\'100%\' fill=\'%23081214\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'48\' fill=\'%239aa4b2\'>No cover</text></svg>');"></div>
 
+        <div style="text-align:center;width:100%">
+          <div id="title_small" style="font-weight:700;font-size:15px">—</div>
+          <div id="artist_small" style="font-size:13px;color:var(--muted);margin-top:6px">—</div>
+        </div>
+
+        <div style="margin-top:8px;width:100%;display:flex;gap:8px;justify-content:space-between;align-items:center">
+          <button id="playBtnSmall" class="btn" title="Play/Pause">▶</button>
+          <div style="flex:1;text-align:center;color:var(--muted);font-size:13px">Stream: listen.moe</div>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.9" style="width:120px">
+        </div>
+      </div>
+
+      <div class="right">
+        <div>
+          <div class="title" id="title">—</div>
+          <div class="artist" id="artist">—</div>
+
+          <div class="progress">
+            <div class="time" id="curTime">0:00</div>
+            <div class="bar" id="progressBar" role="slider" aria-valuemin="0" aria-valuemax="100">
+              <div class="filled" id="progressFill"></div>
+            </div>
+            <div class="time" id="dur">0:00</div>
+          </div>
+
+          <div class="controls">
+            <button id="prev" class="btn" title="Previous">⏮</button>
+            <button id="rew" class="btn" title="Rewind 10s">⟲</button>
+            <button id="play" class="btn play" title="Play/Pause">▶</button>
+            <button id="fwd" class="btn" title="Forward 10s">⟳</button>
+            <button id="next" class="btn" title="Next">⏭</button>
+          </div>
+        </div>
+
+        <div class="bottom">
+          <div class="col" style="flex:0.6">
+            <h4>Now / Last Played</h4>
+            <div class="list" id="lastPlayed"></div>
+          </div>
+
+          <div class="col" style="flex:0.4">
+            <h4>Info</h4>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div>Listeners: <strong id="listeners2">--</strong></div>
+              <div>Song ID: <span id="songId">—</span></div>
+              <div>Started: <span id="started">—</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Hidden audio element -->
+  <audio id="player" crossorigin="anonymous" preload="metadata">
+    <source src="https://listen.moe/stream" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+  // Utilities
+  const $ = s => document.querySelector(s);
+  const $all = s => Array.from(document.querySelectorAll(s));
+
+  // DOM
+  const player = $('#player');
+  const playBtn = $('#play');
+  const playBtnSmall = $('#playBtnSmall');
+  const progressFill = $('#progressFill');
+  const progressBar = $('#progressBar');
+  const curTime = $('#curTime');
+  const durTime = $('#dur');
+  const title = $('#title');
+  const artist = $('#artist');
+  const titleSmall = $('#title_small');
+  const artistSmall = $('#artist_small');
+  const cover = $('#cover');
+  const lastPlayedEl = $('#lastPlayed');
+  const listeners = $('#listeners');
+  const listeners2 = $('#listeners2');
+  const songIdEl = $('#songId');
+  const startedEl = $('#started');
+  const volume = $('#volume');
+
+  // Player state
+  let isPlaying = false;
+  volume.addEventListener('input', e => { player.volume = Number(e.target.value); });
+  player.volume = Number(volume.value);
+
+  // Play/pause
+  function setPlaying(state){
+    isPlaying = !!state;
+    playBtn.innerText = isPlaying ? '⏸' : '▶';
+    playBtnSmall.innerText = isPlaying ? '⏸' : '▶';
+    if(isPlaying) player.play().catch(()=>{}); else player.pause();
+  }
+  playBtn.addEventListener('click', ()=> setPlaying(!isPlaying));
+  playBtnSmall.addEventListener('click', ()=> setPlaying(!isPlaying));
+
+  // Seek via bar
+  function formatTime(s){ if(!s && s!==0) return '--:--'; s = Math.floor(s); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+  progressBar.addEventListener('click', e=>{
+    const rect = progressBar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left)/rect.width));
+    if(player.duration && isFinite(player.duration)) player.currentTime = pct*player.duration;
+  });
+
+  // Rewind/forward/skip
+  $('#rew').addEventListener('click', ()=> { if(player.currentTime) player.currentTime = Math.max(0, player.currentTime - 10); });
+  $('#fwd').addEventListener('click', ()=> { if(player.currentTime) player.currentTime = Math.min(player.duration||0, player.currentTime + 10); });
+
+  // Update progress bar from audio element (stream may not give duration)
+  player.addEventListener('timeupdate', ()=>{
+    const dur = player.duration || 0;
+    const cur = player.currentTime || 0;
+    curTime.textContent = formatTime(cur);
+    durTime.textContent = dur ? formatTime(dur) : 'Live';
+    const pct = dur ? (cur/dur*100) : 0;
+    progressFill.style.width = pct+'%';
+  });
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', e=>{
+    if(e.code === 'Space') { e.preventDefault(); setPlaying(!isPlaying); }
+    if(e.key === 'ArrowRight') player.currentTime = Math.min((player.duration||0), player.currentTime + 10);
+    if(e.key === 'ArrowLeft') player.currentTime = Math.max(0, player.currentTime - 10);
+  });
+
+  // WebSocket logic
+  let ws, hbInt;
+  function startWS(){
+    ws = new WebSocket('wss://listen.moe/gateway_v2');
+    ws.addEventListener('open', ()=>{
+      console.log('WS open');
+      clearInterval(hbInt);
+      hbInt = null;
+    });
+
+    ws.addEventListener('message', msg=>{
+      if(!msg.data) return;
+      let res;
+      try{ res = JSON.parse(msg.data); }catch(e){return}
+      // OpCodes: 0 = Hello (with heartbeat), 1 = Event
+      if(res.op === 0){
+        // send an immediate heartbeat and start interval
+        if(res.d && res.d.heartbeat) {
+          ws.send(JSON.stringify({op:9}));
+          clearInterval(hbInt);
+          hbInt = setInterval(()=>{ if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({op:9})); }, res.d.heartbeat);
+        }
+      } else if(res.op === 1){
+        if(!['TRACK_UPDATE','TRACK_UPDATE_REQUEST','QUEUE_UPDATE','NOTIFICATION'].includes(res.t)) return;
+        const d = res.d || {};
+        // Update UI
+        const song = d.song || {};
+        const titleText = song.title || '—';
+        const artistText = (song.artists||[]).map(a=>a.name).join(', ') || '—';
+        title.textContent = titleText; titleSmall.textContent = titleText;
+        artist.textContent = artistText; artistSmall.textContent = artistText;
+        listeners.textContent = (d.listeners != null) ? d.listeners + ' listeners' : '-- listeners';
+        listeners2.textContent = d.listeners ?? '--';
+        songIdEl.textContent = song.id ?? '—';
+        startedEl.textContent = d.startTime ? new Date(d.startTime).toLocaleString() : '—';
+
+        // Cover handling: prefer current song album image, else lastPlayed[0]
+        function getCoverFromSong(s){
+          return s && s.albums && s.albums[0] && s.albums[0].image ? 'https://cdn.listen.moe/covers/'+s.albums[0].image : null;
+        }
+        let coverUrl = getCoverFromSong(song);
+        if(!coverUrl && d.lastPlayed && d.lastPlayed[0]) coverUrl = getCoverFromSong(d.lastPlayed[0]);
+        if(coverUrl){
+          // preload then set with smooth transition
+          const img = new Image(); img.crossOrigin='anonymous'; img.onload = ()=>{
+            cover.style.backgroundImage = `url(${coverUrl})`;
+            document.getElementById('bg').style.backgroundImage = `url(${coverUrl})`;
+          };
+          img.onerror = ()=>{
+            // ignore
+          }
+          img.src = coverUrl;
+        } else {
+          // fallback
+          cover.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'800\'><rect width=\'100%\' height=\'100%\' fill=\'%23081214\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'48\' fill=\'%239aa4b2\'>No cover</text></svg>')";
+          document.getElementById('bg').style.backgroundImage = "linear-gradient(90deg,#071018,#04111a)";
+        }
+
+        // Populate last played list
+        lastPlayedEl.innerHTML = '';
+        (d.lastPlayed||[]).slice(0,8).forEach(lp=>{
+          const el = document.createElement('div'); el.className='item';
+          const smallCover = document.createElement('div'); smallCover.className='small-cover';
+          const imgfile = lp.albums && lp.albums[0] && lp.albums[0].image ? 'https://cdn.listen.moe/covers/'+lp.albums[0].image : null;
+          smallCover.style.backgroundImage = imgfile ? `url(${imgfile})` : "url('data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'160\\' height=\\'160\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23081214\\'/></svg>')";
+          const txt = document.createElement('div'); txt.style.fontSize='13px'; txt.innerHTML = `<div style=\"font-weight:600\">${lp.title}</div><div style=\"color:var(--muted);font-size:12px\">${(lp.artists||[]).map(a=>a.name).join(', ')}</div>`;
+          el.appendChild(smallCover); el.appendChild(txt); lastPlayedEl.appendChild(el);
+        });
+
+      }
+    });
+
+    ws.addEventListener('close', ()=>{
+      console.warn('WS closed — reconnecting in 5s');
+      clearInterval(hbInt); hbInt = null;
+      setTimeout(()=> startWS(), 5000);
+    });
+
+    ws.addEventListener('error', (e)=>{
+      console.error('WS error', e); ws.close();
+    });
+  }
+  startWS();
+
+  // autoplay attempt
+  setTimeout(()=>{ /* try to start playing when page loads */ try{ player.play().then(()=> setPlaying(true)).catch(()=>{}); }catch(e){} }, 800);
+  </script>
 </body>
-</html>
+  </html>
+  
