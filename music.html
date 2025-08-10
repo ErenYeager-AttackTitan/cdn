@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Music Player</title>
+<link rel="stylesheet" href="https://unpkg.com/aplayer/dist/APlayer.min.css">
+<style>
+  body {
+    background: #0f0f0f;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: white;
+  }
+  #player {
+    width: 100%;
+    max-width: 450px;
+  }
+</style>
+</head>
+<body>
+
+<div id="player"></div>
+
+<script src="https://unpkg.com/aplayer/dist/APlayer.min.js"></script>
+<script>
+const ap = new APlayer({
+    container: document.getElementById('player'),
+    fixed: false, // set to true if you want it fixed at bottom
+    autoplay: false,
+    theme: '#1db954', // Spotify green
+    loop: 'all',
+    order: 'list',
+    preload: 'none',
+    audio: [{
+        name: 'Live Radio',
+        artist: 'r-a-d.io',
+        url: 'https://relay1.r-a-d.io/main.mp3',
+        cover: 'https://mikasa-ackerman-cdn.pages.dev/d7d24dbc06a9345cd0138e6182e21d3c.jpg',
+        type: 'auto'
+    }]
+});
+</script>
+
+</body>
+</html>
