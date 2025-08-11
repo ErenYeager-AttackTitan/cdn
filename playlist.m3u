@@ -1,0 +1,25 @@
+#EXTM3U url-tvg="https://epg.freejptv.com/jp.xml,https://animenosekai.github.io/japanterebi-xmltv/guide.xml" tvg-shift=0 m3uautoload=1
+
+#EXTINF:-1 tvg-id="1" tvg-logo="https://i.postimg.cc/Pq1fFNcw/ezgif-7700a2921a1ba2.png" group-title="Tokyo",TV Tokyo
+http://vn.utako.moe/TV_Tokyo/index.m3u8
+
+#EXTINF:-1 tvg-id="2" tvg-logo="https://i.postimg.cc/y88syvh2/tv-asahi-logo-png-seeklogo-434255.png" group-title="Tokyo",TV Asahi
+http://vn.utako.moe/TV_Asahi/index.m3u8
+
+#EXTINF:-1 tvg-id="3" tvg-logo="https://i.postimg.cc/prjY7ffH/animax-logo-png-seeklogo-196953.png" group-title="Anime",Animax
+http://vn.utako.moe/Animax/index.m3u8
+
+#EXTINF:-1 tvg-id="4" tvg-logo="https://images.seeklogo.com/logo-png/26/1/j-sports-logo-png_seeklogo-261423.png" group-title="Sports",J Sports 1
+http://vn.utako.moe/js1/index.m3u8
+
+#EXTINF:-1 tvg-id="5" tvg-logo="https://i.postimg.cc/SKVZ7fr1/nhk-world-japan-logo-png-seeklogo-370288.png" group-title="World",NHK World
+https://nhkworld-tv.akamaized.net/hls/live/2115640/nhkworld-tv/index_1M.m3u8
+
+#EXTINF:-1 tvg-id="6" tvg-logo="https://i.postimg.cc/Rh0qJ40b/fetch.png" group-title="Music",MTV Japan
+http://cdns.jp-primehome.com:8000/zhongying/live/playlist.m3u8?cid=cs18&isp=4
+
+#EXTINF:-1 tvg-id="7" tvg-logo="https://images.seeklogo.com/logo-png/5/1/fuji-television-network-logo-png_seeklogo-58141.png" group-title="Tokyo",Fuji TV
+https://vn.utako.moe/Fuji_TV/index.m3u8
+
+#EXTINF:-1 tvg-id="8" tvg-logo="https://i.postimg.cc/prjY7ffH/animax-logo-png-seeklogo-196953.png" group-title="Anime",Animax IN
+https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8
